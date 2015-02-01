@@ -20,22 +20,35 @@ ApplicationWindow {
         }
     }
 
-    Label {
-        id: label1
-        text: qsTr("Steam:")
-        anchors.top: parent.top
+    Grid {
+        id: grid1
+        spacing: 6
+        rows: 2
+        columns: 2
+        anchors.rightMargin: 6
+        anchors.leftMargin: 6
+        anchors.bottomMargin: 6
         anchors.topMargin: 6
-        anchors.left: parent.left
-        anchors.leftMargin: 6
-    }
+        anchors.fill: parent
 
-    Label {
-        id: steamLabel
-        text: piping.steamInstallPath
-        anchors.top: label1.top
-        anchors.topMargin: 0
-        anchors.left: label1.right
-        anchors.leftMargin: 6
+        Label {
+            id: label1
+            text: qsTr("Steam location:")
+        }
+
+        Label {
+            id: steamLabel
+            text: piping.steamInstallPath
+        }
+
+        Label {
+            id: label2
+            text: qsTr("Steam running:")
+        }
+
+        Label {
+            text: piping.steamRunning
+        }
     }
 
 }
