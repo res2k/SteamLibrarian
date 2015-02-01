@@ -22,14 +22,15 @@ ApplicationWindow {
 
     Grid {
         id: grid1
+        anchors.right: parent.right
+        anchors.left: parent.left
+        anchors.top: parent.top
+        antialiasing: false
         spacing: 6
-        rows: 2
         columns: 2
         anchors.rightMargin: 6
         anchors.leftMargin: 6
-        anchors.bottomMargin: 6
         anchors.topMargin: 6
-        anchors.fill: parent
 
         Label {
             id: label1
@@ -49,6 +50,28 @@ ApplicationWindow {
         Label {
             text: piping.steamRunning
         }
+
     }
+    Flow {
+        anchors.left: grid1.left
+        anchors.leftMargin: 0
+        anchors.top: grid1.bottom
+        anchors.topMargin: 6
+        spacing: 3
+        enabled: (piping.steamInstallPath != "")
+
+        Button {
+            text: "Start"
+            enabled: (!piping.steamRunning && !piping.actionPending)
+            onClicked: piping.steamStart()
+        }
+        Button {
+            text: "Stop"
+            enabled: (piping.steamRunning && !piping.actionPending)
+            onClicked: piping.steamShutdown()
+        }
+    }
+
+
 
 }

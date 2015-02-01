@@ -1,5 +1,12 @@
 #include "piping/Piping.hpp"
 
+#include <QtConcurrent>
+#include <QDir>
+#include <QFutureWatcher>
+#include <QProcess>
+#include <QStringBuilder>
+#include <QStringList>
+
 #include <Windows.h>
 
 #include "RunningStateDetector.hpp"
@@ -21,6 +28,25 @@ namespace piping
   bool Piping::steamRunning() const
   {
     return m_steamRunning;
+  }
+
+  bool Piping::actionPending() const
+  {
+    return !m_pendingActionActor.isNull();
+  }
+
+  void Piping::steamStart()
+  {
+    QFutureWatcher<void>* startWatcher(new QFutureWatcher<void>);
+    connect(startWatcher, &QFutureWatcher<void>::finished, startWatcher, &QFutureWatcher<void>::deleteLater);
+    SetPendingActionActor(startWatcher);
+    // Need to start detached b/c Steam will be, well, running
+    startWatcher->setFuture(QtConcurrent::run(&QProcess::startDetached, SteamExecutablePath(), QStringList()));
+  }
+
+  void Piping::steamShutdown()
+  {
+    LaunchSteamProcess(QStringList(QStringLiteral("-shutdown")));
   }
 
   namespace
@@ -78,5 +104,38 @@ namespace piping
   {
     m_steamRunning = running;
     emit steamRunningChanged(m_steamRunning);
+  }
+
+  void Piping::SetPendingActionActor(QObject* actor)
+  {
+    m_pendingActionActor = actor;
+    connect(actor, &QObject::destroyed, this, &Piping::actionActorDestroyed);
+    emit actionPendingChanged(actionPending());
+  }
+
+  QString Piping::SteamExecutablePath() const
+  {
+    return m_steamInstallPath % QDir::separator() % QStringLiteral("steam.exe");
+  }
+
+  void Piping::LaunchSteamProcess(const QStringList& arguments)
+  {
+    if (m_pendingActionActor) return;
+
+    QProcess* steamProcess = new QProcess;
+    steamProcess->setProgram(SteamExecutablePath());
+    steamProcess->setArguments(arguments);
+    // Destroy process object as soon as it somehow finished
+    connect(steamProcess, (void(QProcess::*)(int))&QProcess::finished, steamProcess, &QProcess::deleteLater);
+    connect(steamProcess, (void(QProcess::*)(QProcess::ProcessError))&QProcess::error, steamProcess, &QProcess::deleteLater);
+    SetPendingActionActor(steamProcess);
+    steamProcess->start();
+
+    // TODO: Handle errors...
+  }
+
+  void Piping::actionActorDestroyed()
+  {
+    emit actionPendingChanged(actionPending());
   }
 } // namespace piping
