@@ -25,6 +25,9 @@ namespace piping
     Piping(QObject* parent = nullptr);
     ~Piping();
 
+    /**\name Steam availability & state
+     * @{ */
+  public:
     /// Steam install path (or an empty string, if not found)
     QString steamInstallPath() const { return m_steamInstallPath; }
     /// Whether Steam is running
@@ -32,13 +35,14 @@ namespace piping
 
     Q_PROPERTY(QString steamInstallPath READ steamInstallPath CONSTANT)
     Q_PROPERTY(bool steamRunning READ steamRunning NOTIFY steamRunningChanged)
+  signals:
+    void steamRunningChanged(bool newState);
+    /** @} */
   private:
     /// Fetch Steam install path
     void FetchInstallPath();
     /// Set steam running state (called by RunningStateDetector)
     Q_INVOKABLE void SetSteamRunning(bool running);
-  signals:
-    void steamRunningChanged(bool newState);
   };
 } // namespace piping
 
