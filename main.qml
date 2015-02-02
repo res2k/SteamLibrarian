@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
+import SteamLibrarian 1.0
 
 ApplicationWindow {
     id: applicationWindow1
@@ -39,7 +40,7 @@ ApplicationWindow {
 
         Label {
             id: steamLabel
-            text: piping.steamInstallPath
+            text: Piping.steamInstallPath
         }
 
         Label {
@@ -48,7 +49,7 @@ ApplicationWindow {
         }
 
         Label {
-            text: piping.steamRunning
+            text: Piping.steamRunning
         }
 
     }
@@ -58,17 +59,17 @@ ApplicationWindow {
         anchors.top: grid1.bottom
         anchors.topMargin: 6
         spacing: 3
-        enabled: (piping.steamInstallPath != "")
+        enabled: (Piping.steamInstallPath != "")
 
         Button {
             text: "Start"
-            enabled: (!piping.steamRunning && !piping.actionPending)
-            onClicked: piping.steamStart()
+            enabled: (!Piping.steamRunning && !Piping.actionPending)
+            onClicked: Piping.steamStart()
         }
         Button {
             text: "Stop"
-            enabled: (piping.steamRunning && !piping.actionPending)
-            onClicked: piping.steamShutdown()
+            enabled: (Piping.steamRunning && !Piping.actionPending)
+            onClicked: Piping.steamShutdown()
         }
     }
 

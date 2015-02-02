@@ -2,18 +2,15 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "piping/Piping.hpp"
+#include "piping/RegisterSingleton.hpp"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    piping::RegisterSingleton("SteamLibrarian", 1, 0);
+
     QQmlApplicationEngine engine;
-    QQmlContext* context = engine.rootContext();
-
-    piping::Piping steamPiping;
-    context->setContextProperty("piping", &steamPiping);
-
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
