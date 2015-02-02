@@ -4,10 +4,10 @@ PROJECT(SteamLibrarian)
 find_package(Qt5 REQUIRED COMPONENTS Concurrent Qml Widgets)
 set(CMAKE_AUTOMOC ON)
 
+add_subdirectory(facade)
 add_subdirectory(piping)
 
-qt5_add_resources(QML_QRC qml.qrc OPTIONS --compress 9 --threshold 0)
-add_executable(SteamLibrarian main.cpp main.qml ${QML_QRC})
+add_executable(SteamLibrarian main.cpp)
 target_link_libraries(SteamLibrarian
-	              Piping
+	              Facade Piping
 		      Qt5::Qml Qt5::Widgets)
