@@ -1,0 +1,3 @@
+module SteamLibrarian
+plugin QmlSteamLibrarian
+typeinfo plugins.qmltypes
