@@ -17,7 +17,7 @@ add_library(QmlSteamLibrarian SHARED
             plugin/SteamLibrarian.cpp
            )
 target_link_libraries(QmlSteamLibrarian
-	              Piping
+	              Facade Piping
 		      Qt5::Qml)
 
 install(TARGETS QmlSteamLibrarian
