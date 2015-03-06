@@ -6,6 +6,8 @@ add_library(Piping
             src/RegisterTypes.cpp
             src/RunningStateDetector.cpp
             src/RunningStateDetector.hpp
+            src/vdf.cpp
+            src/vdf.hpp
             include/piping/App.hpp
             include/piping/Libraries.hpp
             include/piping/Library.hpp
@@ -13,5 +15,6 @@ add_library(Piping
             include/piping/RegisterTypes.hpp
            )
 target_include_directories(Piping PUBLIC include)
-target_link_libraries(Piping Qt5::Core Qt5::Concurrent Qt5::Qml)
-
+target_include_directories(Piping PRIVATE ${Boost_INCLUDE_DIR})
+target_link_libraries(Piping Qt5::Core Qt5::Concurrent Qt5::Qml
+                      ${Boost_FILESYSTEM_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_SYSTEM_LIBRARY})
