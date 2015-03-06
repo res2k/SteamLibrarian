@@ -5,16 +5,25 @@
  */
 function RedBlackTree()
 {
-    this.Node = function(key, value) {
+    this.Node = function(key, value, userCount) {
         this.key = key;
         this.value = value;
         this.parent = null;
         this.children = [null, null];
         this.color = 1; // initialize with red
-        this.count = 1;
+        userCount = userCount !== undefined ? userCount : 0;
+        this.userCount = userCount;
+        this.counts = [1, userCount];
     }
     this.Node.prototype.dump = function(indent) {
-        var str = indent + this.key + ": " + this.value + " " + (this.color == 0 ? "b" : "r") + " " + this.count + "\n";
+        var str = indent
+            + this.key + ": "
+            + this.value + " "
+            + (this.color == 0 ? "b" : "r")
+            + " " + this.counts[0]
+            + " user: " + this.userCount
+            + " user total: " + this.counts[1]
+            + "\n";
         if ((this.children[0] !== null) || (this.children[1] !== null))
         {
             for(var c = 0; c < 2; c++)
@@ -88,10 +97,13 @@ RedBlackTree.prototype.dump = function() {
 }
 
 RedBlackTree.prototype._updateCount = function(node) {
-    var c = ((node.children[0] !== null) ? node.children[0].count : 0)
-          + ((node.children[1] !== null) ? node.children[1].count : 0)
-          + 1;
-    node.count = c;
+    for (var n = 0; n < 2; n++)
+    {
+        var c = ((node.children[0] !== null) ? node.children[0].counts[n] : 0)
+              + ((node.children[1] !== null) ? node.children[1].counts[n] : 0)
+              + ((n === 0) ? 1 : node.userCount);
+        node.counts[n] = c;
+    }
 }
 
 RedBlackTree.prototype._internalInsert = function(node, newNode) {
@@ -262,9 +274,9 @@ RedBlackTree.prototype._updateCountAfterRemove = function(node, key) {
     this._updateCount(node);
 }
 
-RedBlackTree.prototype.querySortedIndex = function (key) {
+RedBlackTree.prototype._queryCount = function (key, n) {
     if (this.root === null) return undefined;
-    /* The "sorted index" is the position a node would have
+    /* The "count" is sum of all node counts up until the node itself
        if the tree was traversed depth-first left-to-right.
        Determine this number w/o doing a whole traversal. */
     var node = this.root;
@@ -274,19 +286,19 @@ RedBlackTree.prototype.querySortedIndex = function (key) {
         if (node.key === key)
         {
             // Node found
-            // Increase current index by the number of nodes in the left subtree.
+            // Increase current index by the count sum of the left subtree.
             if (node.children[0] !== null)
-                index += node.children[0].count;
+                index += node.children[0].counts[n];
             node = null;
         }
         else if (node.key < key)
         {
             // Go right.
-            // The index must be increased by the number of nodes in the left subtree.
+            // The index must be increased by the count sum of the left subtree.
             if (node.children[0] !== null)
-                index += node.children[0].count;
+                index += node.children[0].counts[n];
             // And, of course, the node itself
-            index += 1;
+            index += (n === 0) ? 1 : node.userCount;
             node = node.children[1];
         }
         else
@@ -297,6 +309,17 @@ RedBlackTree.prototype.querySortedIndex = function (key) {
         }
     }
     return index;
+}
+
+RedBlackTree.prototype.querySortedIndex = function (key) {
+    /* The "sorted index" is the position a node would have
+       if the tree was traversed depth-first left-to-right.
+       Determine this number w/o doing a whole traversal. */
+    return this._queryCount(key, 0);
+}
+
+RedBlackTree.prototype.queryUserCount = function (key) {
+    return this._queryCount(key, 1);
 }
 
 RedBlackTree.prototype.queryValue = function (key) {
@@ -317,7 +340,29 @@ RedBlackTree.prototype.queryValue = function (key) {
 }
 
 RedBlackTree.prototype.count = function() {
-    return this.root !== null ? this.root.count : 0;
+    return this.root !== null ? this.root.counts[0] : 0;
+}
+
+RedBlackTree.prototype.totalUserCount = function() {
+    return this.root !== null ? this.root.counts[1] : 0;
+}
+
+RedBlackTree.prototype._setUserCount = function(node, key, count) {
+    if (node === null) return;
+    if (node.key === key)
+    {
+        node.userCount = count;
+    }
+    else
+    {
+        var dir = (node.key < key) ? 1 : 0;
+        this._setUserCount(node.children[dir], key, count);
+    }
+    this._updateCount(node);
+}
+
+RedBlackTree.prototype.setUserCount = function(key, count) {
+    this._setUserCount(this.root, key, count);
 }
 
 RedBlackTree.prototype.traverse = function(callback) {
