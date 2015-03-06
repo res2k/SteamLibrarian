@@ -3,6 +3,7 @@ import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import SteamLibrarian 1.0
+import "js/RedBlackTree.js" as RedBlackTree
 
 ApplicationWindow {
     id: applicationWindow1
@@ -10,6 +11,53 @@ ApplicationWindow {
     width: 640
     height: 480
     visible: true
+
+    property var libs: new RedBlackTree.RedBlackTree()
+
+    function addLibrary(lib) {
+        libs.insert(lib, new RedBlackTree.RedBlackTree());
+        for (var a = 0; a < lib.count(); a++)
+        {
+            addApp(lib, lib.get(a));
+        }
+    }
+
+    function addApp(lib, app) {
+        var modelIndex = 0;
+        /* FIXME: Could enhance RedBlackTree's 'count'/QSI facility to support
+         * arbitrary numbers (and thus use that to get the lib-based modelIndex
+         * base) */
+        libs.traverse(function(lib_k, lib_v) {
+            if (lib_k === lib)
+            {
+                return false;
+            }
+            modelIndex += lib_v.count();
+            return true;
+        });
+        var appsTree = libs.queryValue(lib);
+        appsTree.insert(app, null);
+        modelIndex += appsTree.querySortedIndex(app);
+        console.log(modelIndex);
+        console.log(app.name + " " + lib.path);
+        appsModel.insert(modelIndex, {"app": app.name, "library": lib.path});
+    }
+
+    Component.onCompleted: {
+        for (var l = 0; l < Piping.libraries.count(); l++)
+        {
+            var lib = Piping.libraries.get(l);
+            addLibrary(lib);
+        }
+        libs.traverse(function(lib_k, lib_v) {
+            lib_v.traverse(function(app_k, app_v) {
+                console.log(app_k.name + " " + lib_v.path);
+                //appsModel.append({"app": app_k.name, "library": lib_k.path});
+                return true;
+            });
+            return true;
+        })
+    }
 
     menuBar: MenuBar {
         Menu {
@@ -98,110 +146,34 @@ ApplicationWindow {
         Layout.preferredHeight: 400*/
 
         TableViewColumn {
-            id: titleColumn
-            title: "Title"
-            role: "title"
+            id: appColumn
+            title: "App"
+            role: "app"
             movable: false
-            resizable: false
-            width: tableView.viewport.width - authorColumn.width
+            resizable: true
+            width: tableView.viewport.width / 3
         }
 
         TableViewColumn {
-            id: authorColumn
-            title: "Author"
-            role: "author"
+            id: libColumn
+            title: "Library"
+            role: "library"
             movable: false
-            resizable: false
-            width: tableView.viewport.width / 3
+            resizable: true
+            width: tableView.viewport.width - appColumn.width
         }
 
         model: SortFilterProxyModel {
             id: proxyModel
-            source: sourceModel.count > 0 ? sourceModel : null
+            source: appsModel.count > 0 ? appsModel : null
 
             sortOrder: tableView.sortIndicatorOrder
             sortCaseSensitivity: Qt.CaseInsensitive
-            sortRole: sourceModel.count > 0 ? tableView.getColumn(tableView.sortIndicatorColumn).role : ""
+            sortRole: appsModel.count > 0 ? tableView.getColumn(tableView.sortIndicatorColumn).role : ""
         }
 
         ListModel {
-            id: sourceModel
-            ListElement {
-                title: "Moby-Dick"
-                author: "Herman Melville"
-            }
-            ListElement {
-                title: "The Adventures of Tom Sawyer"
-                author: "Mark Twain"
-            }
-            ListElement {
-                title: "Cat’s Cradle"
-                author: "Kurt Vonnegut"
-            }
-            ListElement {
-                title: "Farenheit 451"
-                author: "Ray Bradbury"
-            }
-            ListElement {
-                title: "It"
-                author: "Stephen King"
-            }
-            ListElement {
-                title: "On the Road"
-                author: "Jack Kerouac"
-            }
-            ListElement {
-                title: "Of Mice and Men"
-                author: "John Steinbeck"
-            }
-            ListElement {
-                title: "Do Androids Dream of Electric Sheep?"
-                author: "Philip K. Dick"
-            }
-            ListElement {
-                title: "Uncle Tom’s Cabin"
-                author: "Harriet Beecher Stowe"
-            }
-            ListElement {
-                title: "The Call of the Wild"
-                author: "Jack London"
-            }
-            ListElement {
-                title: "The Old Man and the Sea"
-                author: "Ernest Hemingway"
-            }
-            ListElement {
-                title: "A Streetcar Named Desire"
-                author: "Tennessee Williams"
-            }
-            ListElement {
-                title: "Catch-22"
-                author: "Joseph Heller"
-            }
-            ListElement {
-                title: "One Flew Over the Cuckoo’s Nest"
-                author: "Ken Kesey"
-            }
-            ListElement {
-                title: "The Murders in the Rue Morgue"
-                author: "Edgar Allan Poe"
-            }
-            ListElement {
-                title: "Breakfast at Tiffany’s"
-                author: "Truman Capote"
-            }
-            ListElement {
-                title: "Death of a Salesman"
-                author: "Arthur Miller"
-            }
-            ListElement {
-                title: "Post Office"
-                author: "Charles Bukowski"
-            }
-            ListElement {
-                title: "Herbert West—Reanimator"
-                author: "H. P. Lovecraft"
-            }
+            id: appsModel
         }
     }
 }
