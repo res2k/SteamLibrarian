@@ -24,23 +24,12 @@ ApplicationWindow {
 
     function addApp(lib, app) {
         var modelIndex = 0;
-        /* FIXME: Could enhance RedBlackTree's 'count'/QSI facility to support
-         * arbitrary numbers (and thus use that to get the lib-based modelIndex
-         * base) */
-        libs.traverse(function(lib_k, lib_v) {
-            if (lib_k === lib)
-            {
-                return false;
-            }
-            modelIndex += lib_v.count();
-            return true;
-        });
+        modelIndex = libs.queryUserCount(lib);
         var appsTree = libs.queryValue(lib);
         appsTree.insert(app, null);
         modelIndex += appsTree.querySortedIndex(app);
-        console.log(modelIndex);
-        console.log(app.name + " " + lib.path);
         appsModel.insert(modelIndex, {"app": app.name, "library": lib.path});
+        libs.setUserCount(lib, appsTree.count());
     }
 
     Component.onCompleted: {
@@ -49,14 +38,6 @@ ApplicationWindow {
             var lib = Piping.libraries.get(l);
             addLibrary(lib);
         }
-        libs.traverse(function(lib_k, lib_v) {
-            lib_v.traverse(function(app_k, app_v) {
-                console.log(app_k.name + " " + lib_v.path);
-                //appsModel.append({"app": app_k.name, "library": lib_k.path});
-                return true;
-            });
-            return true;
-        })
     }
 
     menuBar: MenuBar {
