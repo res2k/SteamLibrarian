@@ -18,6 +18,10 @@ namespace piping
   private:
     /// Known libraries
     QList<Library*> m_libraries;
+    /// "Master" library path
+    QString m_masterLibraryPath;
+    /// libraryfolders.vdf path
+    QString m_libraryFolderVdf;
   public:
     Libraries();
     Libraries(const QString& steamPath, QObject* parent = nullptr);
@@ -32,6 +36,11 @@ namespace piping
     void libraryAdd(piping::Library* lib);
     /// Emitted when a library is about to be removed
     void libraryRemove(piping::Library* lib);
+  private:
+    /// Signalled if the master library folder watcher detected a change
+    void MasterLibraryFolderChanged(const QString& path);
+    /// Rescan libraryfolders.vdf
+    template<bool EmitSignals> void RescanLibraryFoldersVDF();
   };
 } // namespace piping
 
