@@ -2,6 +2,9 @@
 
 #include "piping/App.hpp"
 
+#include <QDir>
+#include <QFileInfo>
+
 namespace piping
 {
   Library::Library(const QString& path, QObject* parent) : QObject(parent), m_path(path)
@@ -11,6 +14,11 @@ namespace piping
     {
       m_apps.append(new App(this, QString(QStringLiteral("Dummy App %1")).arg(++count)));
     }
+  }
+
+  QString Library::displayName() const
+  {
+    return QDir::toNativeSeparators(m_path);
   }
 
   const QString& Library::path() const { return m_path;  }

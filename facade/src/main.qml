@@ -28,7 +28,7 @@ ApplicationWindow {
         var appsTree = libs.queryValue(lib);
         appsTree.insert(app, null);
         modelIndex += appsTree.querySortedIndex(app);
-        appsModel.insert(modelIndex, {"app": app.name, "library": lib.path});
+        appsModel.insert(modelIndex, {"app": app.name, "library": lib.displayName});
         libs.setUserCount(lib, appsTree.count());
     }
 

@@ -22,6 +22,8 @@ namespace piping
   public:
     Library(const QString& path, QObject* parent = nullptr);
 
+    /// Get library display name
+    QString displayName() const;
     /// Get library path
     const QString& path() const;
 
@@ -30,6 +32,7 @@ namespace piping
     /// Get an app
     Q_INVOKABLE piping::App* get(int index) const;
 
+    Q_PROPERTY(QString displayName READ displayName CONSTANT)
     Q_PROPERTY(QString path READ path CONSTANT)
   };
 } // namespace piping
