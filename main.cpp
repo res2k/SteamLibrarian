@@ -3,13 +3,13 @@
 
 #include "facade/RegisterTypes.hpp"
 #include "facade/Start.hpp"
-#include "piping/RegisterSingleton.hpp"
+#include "piping/RegisterTypes.hpp"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    piping::RegisterSingleton("SteamLibrarian", 1, 0);
+    piping::RegisterTypes("SteamLibrarian", 1, 0);
     facade::RegisterTypes("SteamLibrarian", 1, 0);
 
     QQmlApplicationEngine engine;

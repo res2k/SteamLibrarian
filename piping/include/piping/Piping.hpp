@@ -10,6 +10,8 @@
 
 namespace piping
 {
+  class Libraries;
+
   class Piping : public QObject
   {
     Q_OBJECT
@@ -18,6 +20,8 @@ namespace piping
     QString m_steamInstallPath;
     /// Steam running state
     bool m_steamRunning;
+    /// Libraries container
+    Libraries* m_libraries;
 
     class RunningStateDetector;
     /// Helper to detect the Steam running state
@@ -62,6 +66,15 @@ namespace piping
     void steamStart();
     /// Shut down steam
     void steamShutdown();
+    /** @} */
+
+    /**\name Steam libraries
+     * @{ */
+  public:
+    /// Get libraries container
+    Libraries* libraries() const;
+
+    Q_PROPERTY(piping::Libraries* libraries READ libraries CONSTANT)
     /** @} */
   private:
     /// Fetch Steam install path

@@ -1,5 +1,7 @@
 #include "piping/Piping.hpp"
 
+#include "piping/Libraries.hpp"
+
 #include <QtConcurrent>
 #include <QDir>
 #include <QFutureWatcher>
@@ -20,6 +22,7 @@ namespace piping
     {
       m_runningStateDetector = new RunningStateDetector(this);
     }
+    m_libraries = new Libraries(m_steamInstallPath, this);
   }
 
   Piping::~Piping()
@@ -47,6 +50,11 @@ namespace piping
   void Piping::steamShutdown()
   {
     LaunchSteamProcess(QStringList(QStringLiteral("-shutdown")));
+  }
+
+  Libraries* Piping::libraries() const
+  {
+    return m_libraries;
   }
 
   namespace
