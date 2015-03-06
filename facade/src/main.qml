@@ -6,7 +6,7 @@ import SteamLibrarian 1.0
 
 ApplicationWindow {
     id: applicationWindow1
-    title: qsTr("Hello World")
+    title: qsTr("Steam Librarian")
     width: 640
     height: 480
     visible: true
