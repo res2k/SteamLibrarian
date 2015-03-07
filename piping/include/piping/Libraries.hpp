@@ -4,8 +4,14 @@
 #ifndef __PIPING_LIBRARIES_HPP__
 #define __PIPING_LIBRARIES_HPP__
 
+#include <QFuture>
+#include <QFutureWatcher>
 #include <QList>
 #include <QObject>
+
+#include <memory>
+
+class QFileSystemWatcher;
 
 namespace piping
 {
@@ -22,9 +28,18 @@ namespace piping
     QString m_masterLibraryPath;
     /// libraryfolders.vdf path
     QString m_libraryFolderVdf;
+    /// File system watcher used to detect changes to libraryfolders.vdf
+    QFileSystemWatcher* m_fsw;
+
+    typedef QSet<QString> RescanResultType;
+    /// Future for current pending libraries rescan
+    std::shared_ptr<QFuture<RescanResultType> > pendingRescan;
+    /// Watcher for rescan future
+    QFutureWatcher<RescanResultType> rescanWatcher;
   public:
     Libraries();
     Libraries(const QString& steamPath, QObject* parent = nullptr);
+    ~Libraries();
 
     /// Get number of known libraries
     Q_INVOKABLE int count() const;
@@ -39,8 +54,14 @@ namespace piping
   private:
     /// Signalled if the master library folder watcher detected a change
     void MasterLibraryFolderChanged(const QString& path);
+    /// Signalled if the master library folder watcher detected a change
+    void LibraryFoldersVDFChanged(const QString& path);
     /// Rescan libraryfolders.vdf
-    template<bool EmitSignals> void RescanLibraryFoldersVDF();
+    void RescanLibraryFoldersVDF();
+    /// Worker method for rescanning the library folder
+    RescanResultType RescanLibraryFoldersVDFWorker();
+    /// Method to deal with libraries scan result
+    void LibraryFoldersScanResult();
   };
 } // namespace piping
 
