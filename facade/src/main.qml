@@ -22,6 +22,14 @@ ApplicationWindow {
         }
     }
 
+    function removeLibrary(lib) {
+        var modelIndex = libs.queryUserCount(lib);
+        var appsTree = libs.queryValue(lib);
+        var numApps = appsTree.count();
+        libs.remove(lib);
+        appsModel.remove(modelIndex, numApps);
+    }
+
     function addApp(lib, app) {
         var modelIndex = 0;
         modelIndex = libs.queryUserCount(lib);
@@ -38,6 +46,8 @@ ApplicationWindow {
             var lib = Piping.libraries.get(l);
             addLibrary(lib);
         }
+        Piping.libraries.libraryAdd.connect(addLibrary);
+        Piping.libraries.libraryRemove.connect(removeLibrary);
     }
 
     menuBar: MenuBar {
