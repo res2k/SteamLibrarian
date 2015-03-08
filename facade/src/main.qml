@@ -14,12 +14,38 @@ ApplicationWindow {
 
     property var libs: new RedBlackTree.RedBlackTree()
 
+    function addOneApp(lib, app) {
+        var modelIndex = libs.queryUserCount(lib);
+        var appsTree = libs.queryValue(lib);
+        appsTree.insert(app, null);
+        modelIndex += appsTree.querySortedIndex(app);
+        appsModel.insert(modelIndex, {"app": app.name, "library": lib.displayName});
+        libs.setUserCount(lib, appsTree.count());
+    }
+
+    function addApp(app) {
+        var lib = app.library;
+        addOneApp(lib, app);
+    }
+
+    function removeApp(app) {
+        var lib = app.library;
+        var modelIndex = libs.queryUserCount(lib);
+        var appsTree = libs.queryValue(lib);
+        modelIndex += appsTree.querySortedIndex(app);
+        appsTree.remove(app);
+        appsModel.remove(modelIndex, 1);
+        libs.setUserCount(lib, appsTree.count());
+    }
+
     function addLibrary(lib) {
         libs.insert(lib, new RedBlackTree.RedBlackTree());
         for (var a = 0; a < lib.count(); a++)
         {
-            addApp(lib, lib.get(a));
+            addOneApp(lib, lib.get(a));
         }
+        lib.appAdd.connect(addApp);
+        lib.appRemove.connect(removeApp);
     }
 
     function removeLibrary(lib) {
@@ -28,16 +54,6 @@ ApplicationWindow {
         var numApps = appsTree.count();
         libs.remove(lib);
         appsModel.remove(modelIndex, numApps);
-    }
-
-    function addApp(lib, app) {
-        var modelIndex = 0;
-        modelIndex = libs.queryUserCount(lib);
-        var appsTree = libs.queryValue(lib);
-        appsTree.insert(app, null);
-        modelIndex += appsTree.querySortedIndex(app);
-        appsModel.insert(modelIndex, {"app": app.name, "library": lib.displayName});
-        libs.setUserCount(lib, appsTree.count());
     }
 
     Component.onCompleted: {

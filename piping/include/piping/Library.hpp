@@ -4,7 +4,11 @@
 #ifndef __PIPING_LIBRARY_HPP__
 #define __PIPING_LIBRARY_HPP__
 
+#include <QFutureWatcher>
+#include <QHash>
 #include <QObject>
+
+class QFileSystemWatcher;
 
 namespace piping
 {
@@ -17,10 +21,19 @@ namespace piping
   private:
     /// Library path
     QString m_path;
+    /// Library 'steamapps' path
+    QString m_steamAppsPath;
     /// Apps
     QList<App*> m_apps;
+    /// Library directory watcher
+    QFileSystemWatcher* m_fsw;
+    /// Map from .acf name to m_apps index
+    QHash<QString, int> m_appObjMap;
+    /// Active watchers for .acf parsing
+    QSet<QFutureWatcher<App*>*> m_activeACFParseWatchers;
   public:
     Library(const QString& path, QObject* parent = nullptr);
+    ~Library();
 
     /// Get library display name
     QString displayName() const;
@@ -34,6 +47,26 @@ namespace piping
 
     Q_PROPERTY(QString displayName READ displayName CONSTANT)
     Q_PROPERTY(QString path READ path CONSTANT)
+  signals:
+    /// Emitted when a new app was added
+    void appAdd(piping::App* app);
+    /// Emitted when an app is about to be removed
+    void appRemove(piping::App* app);
+  protected:
+    /// The library folder contents changed
+    void LibraryFolderChanged(const QString& path);
+    /// Look for .acf files
+    void RescanForACFs();
+
+    /// Scan a new .acf
+    void NewACF(const QString& acfName);
+    /// Remove an .acf + associated app object
+    void RemoveACF(const QString& acfName);
+
+    /// Worker method for concurrent .acf parsing
+    App* ParseACFWorker(App* app);
+    /// Signalled if an ACF worker finished
+    void ParseACFFinished();
   };
 } // namespace piping
 

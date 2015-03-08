@@ -15,17 +15,19 @@ namespace piping
   {
     Q_OBJECT
   private:
-    /// App name
-    QString m_name;
+    /// App .acf name
+    QString m_acf;
   public:
-    App(Library* lib, const QString& name);
+    App(Library* lib, const QString& acf);
 
     /// Get library this app is in
-    Library* library() const;
+    piping::Library* library() const;
+    /// Get .acf name
+    const QString& acfName() const;
     /// Get app name
     const QString& name() const;
 
-    Q_PROPERTY(Library* library READ library CONSTANT)
+    Q_PROPERTY(piping::Library* library READ library CONSTANT)
     Q_PROPERTY(QString name READ name CONSTANT)
   };
 } // namespace piping
