@@ -13,6 +13,7 @@ add_library(Piping
             include/piping/Library.hpp
             include/piping/Piping.hpp
             include/piping/RegisterTypes.hpp
+            include/piping/vdf_fwd.hpp
            )
 target_include_directories(Piping PUBLIC include)
 target_include_directories(Piping PRIVATE ${Boost_INCLUDE_DIR})

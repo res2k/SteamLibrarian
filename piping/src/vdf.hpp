@@ -4,16 +4,14 @@
 #ifndef __PIPING_VDF_HPP__
 #define __PIPING_VDF_HPP__
 
-#include <boost/property_tree/ptree.hpp>
+#include "piping/vdf_fwd.hpp"
 
-class QString;
+#include <boost/property_tree/ptree.hpp>
 
 namespace piping
 {
   namespace vdf
   {
-    /// VDF contents property tree type
-    typedef boost::property_tree::wiptree vdf_ptree;
     /// Read a VDF
     vdf_ptree ReadVDF(const QString& path);
   } // namespace vdf

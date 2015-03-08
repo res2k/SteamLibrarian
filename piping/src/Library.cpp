@@ -10,6 +10,8 @@
 #include <QStringBuilder>
 #include <QStringList>
 
+#include "vdf.hpp"
+
 namespace piping
 {
   Library::Library(const QString& path, QObject* parent) : QObject(parent), m_path(path)
@@ -59,7 +61,7 @@ namespace piping
     QSet<QString> seenACFs;
     Q_FOREACH(const QFileInfo& acf_info, acf_entries)
     {
-      QString acfBase(acf_info.baseName());
+      QString acfBase(acf_info.fileName());
       if (!m_appObjMap.contains(acfBase))
       {
         // New .acf
@@ -108,7 +110,19 @@ namespace piping
 
   App* Library::ParseACFWorker(App* app)
   {
-    return app;
+    QString acf_full_path = m_steamAppsPath % QDir::separator() % app->acfName();
+    try
+    {
+      vdf::vdf_ptree acfData(vdf::ReadVDF(acf_full_path));
+      app->SetACF(std::move(acfData));
+      return app;
+    }
+    catch (std::exception& e)
+    {
+      qCritical("Error parsing %s: %s", qUtf8Printable(acf_full_path), qUtf8Printable(QString::fromLocal8Bit(e.what())));
+      app->deleteLater();
+      return nullptr;
+    }
   }
 
   void Library::ParseACFFinished()
@@ -118,9 +132,12 @@ namespace piping
     App* app = watcher->future().result();
     watcher->deleteLater();
 
-    int index = m_apps.count();
-    m_apps.append(app);
-    m_appObjMap[app->acfName()] = index;
-    emit appAdd(app);
+    if (app)
+    {
+      int index = m_apps.count();
+      m_apps.append(app);
+      m_appObjMap[app->acfName()] = index;
+      emit appAdd(app);
+    }
   }
 } // namespace piping
