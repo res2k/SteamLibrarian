@@ -3,6 +3,7 @@ PROJECT(SteamLibrarian)
 
 find_package(Qt5 REQUIRED COMPONENTS Concurrent Qml Widgets)
 set(CMAKE_AUTOMOC ON)
+set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.57 REQUIRED filesystem iostreams system)
