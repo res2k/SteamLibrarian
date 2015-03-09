@@ -8,6 +8,10 @@
 #include <QHash>
 #include <QObject>
 
+#include <memory>
+
+#include "vdf_fwd.hpp"
+
 class QFileSystemWatcher;
 
 namespace piping
@@ -29,8 +33,9 @@ namespace piping
     QFileSystemWatcher* m_fsw;
     /// Map from .acf name to m_apps index
     QHash<QString, int> m_appObjMap;
+    typedef std::pair<std::shared_ptr<vdf::vdf_ptree>, QString> acf_parse_result;
     /// Active watchers for .acf parsing
-    QSet<QFutureWatcher<App*>*> m_activeACFParseWatchers;
+    QSet<QFutureWatcher<acf_parse_result>*> m_activeACFParseWatchers;
   public:
     Library(const QString& path, QObject* parent = nullptr);
     ~Library();
@@ -64,7 +69,7 @@ namespace piping
     void RemoveACF(const QString& acfName);
 
     /// Worker method for concurrent .acf parsing
-    App* ParseACFWorker(App* app);
+    acf_parse_result ParseACFWorker(const QString& acfName);
     /// Signalled if an ACF worker finished
     void ParseACFFinished();
   };

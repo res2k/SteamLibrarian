@@ -28,7 +28,7 @@ namespace piping
 
   Library::~Library()
   {
-    Q_FOREACH(QFutureWatcher<App*>* watcher, m_activeACFParseWatchers)
+    Q_FOREACH(QFutureWatcher<acf_parse_result>* watcher, m_activeACFParseWatchers)
     {
       watcher->future().waitForFinished();
     }
@@ -82,12 +82,12 @@ namespace piping
 
   void Library::NewACF(const QString& acfName)
   {
-    App* app = new App(this, acfName);
-    QFutureWatcher<App*>* watcher = new QFutureWatcher<App*>(this);
-    connect(watcher, &QFutureWatcher<App*>::finished, this, &Library::ParseACFFinished);
+    QFutureWatcher<acf_parse_result>* watcher =
+      new QFutureWatcher<acf_parse_result>(this);
+    connect(watcher, &QFutureWatcher<acf_parse_result>::finished, this, &Library::ParseACFFinished);
     m_activeACFParseWatchers.insert(watcher);
 
-    watcher->setFuture(QtConcurrent::run(this, &Library::ParseACFWorker, app));
+    watcher->setFuture(QtConcurrent::run(this, &Library::ParseACFWorker, acfName));
   }
 
   void Library::RemoveACF(const QString& acfName)
@@ -108,35 +108,35 @@ namespace piping
     app->deleteLater();
   }
 
-  App* Library::ParseACFWorker(App* app)
+  Library::acf_parse_result Library::ParseACFWorker(const QString& acfPath)
   {
-    QString acf_full_path = m_steamAppsPath % QDir::separator() % app->acfName();
+    QString acf_full_path = m_steamAppsPath % QDir::separator() % acfPath;
+    std::shared_ptr<vdf::vdf_ptree> acf;
     try
     {
-      vdf::vdf_ptree acfData(vdf::ReadVDF(acf_full_path));
-      app->SetACF(std::move(acfData));
-      return app;
+      acf = std::make_shared<vdf::vdf_ptree> (vdf::ReadVDF(acf_full_path));
     }
     catch (std::exception& e)
     {
       qCritical("Error parsing %s: %s", qUtf8Printable(acf_full_path), qUtf8Printable(QString::fromLocal8Bit(e.what())));
-      app->deleteLater();
-      return nullptr;
     }
+    return std::make_pair(acf, acfPath);
   }
 
   void Library::ParseACFFinished()
   {
-    QFutureWatcher<App*>* watcher(static_cast<QFutureWatcher<App*>*> (sender()));
+    QFutureWatcher<acf_parse_result>* watcher(static_cast<QFutureWatcher<acf_parse_result>*> (sender()));
     m_activeACFParseWatchers.remove(watcher);
-    App* app = watcher->future().result();
+    acf_parse_result vdf = watcher->future().result();
     watcher->deleteLater();
 
-    if (app)
+    if (vdf.first)
     {
+      App* app = new App(this, vdf.second);
+      app->SetACF(std::move (*(vdf.first)));
       int index = m_apps.count();
       m_apps.append(app);
-      m_appObjMap[app->acfName()] = index;
+      m_appObjMap[vdf.second] = index;
       emit appAdd(app);
     }
   }
