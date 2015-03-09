@@ -6,7 +6,7 @@
 
 namespace piping
 {
-  App::App(Library* lib, const QString& acf) : QObject(lib), m_acf(acf) {}
+  App::App(Library* lib) : QObject(lib) {}
 
   App::~App()
   {}
@@ -21,11 +21,6 @@ namespace piping
     return static_cast<Library*> (parent());
   }
 
-  const QString& App::acfName() const
-  {
-    return m_acf;
-  }
-
   QString App::name() const 
   {
     if (m_acfData)
@@ -34,7 +29,7 @@ namespace piping
       if (name_child)
         return QString::fromStdWString(name_child->data());
     }
-    return m_acf;
+    return QStringLiteral("???");
   }
 
 } // namespace piping

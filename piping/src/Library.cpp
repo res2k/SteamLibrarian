@@ -57,13 +57,13 @@ namespace piping
     steamappsDir.setNameFilters(QStringList(QStringLiteral("*.acf")));
     QFileInfoList acf_entries = steamappsDir.entryInfoList();
 
-    QList<QString> oldACFs = m_appObjMap.keys();
+    QList<QString> oldACFs = m_acfAppMap.keys();
 
     QSet<QString> seenACFs;
     Q_FOREACH(const QFileInfo& acf_info, acf_entries)
     {
       QString acfBase(acf_info.fileName());
-      if (!m_appObjMap.contains(acfBase))
+      if (!m_acfAppMap.contains(acfBase))
       {
         // New .acf
         NewACF(acfBase);
@@ -93,19 +93,21 @@ namespace piping
 
   void Library::RemoveACF(const QString& acfName)
   {
-    int index = m_appObjMap[acfName];
-    App* app = m_apps[index];
+    App* app = m_acfAppMap.value(acfName, nullptr);
+    if (!app) return;
     emit appRemove(app);
 
+    int index = m_appObjMap[app];
     int lastIndex = m_apps.count()-1;
     if (index != lastIndex)
     {
-      QString lastACF = m_apps[lastIndex]->acfName();
+      App* lastApp = m_apps[lastIndex];
       m_apps[index] = m_apps[lastIndex];
-      m_appObjMap[lastACF] = index;
+      m_appObjMap[lastApp] = index;
     }
     m_apps.takeLast();
-    m_appObjMap.remove(app->acfName());
+    m_appObjMap.remove(app);
+    m_acfAppMap.remove(acfName);
     app->deleteLater();
   }
 
@@ -133,11 +135,12 @@ namespace piping
 
     if (vdf.first)
     {
-      App* app = new App(this, vdf.second);
+      App* app = new App(this);
       app->SetACF(std::move (*(vdf.first)));
       int index = m_apps.count();
       m_apps.append(app);
-      m_appObjMap[vdf.second] = index;
+      m_appObjMap[app] = index;
+      m_acfAppMap[vdf.second] = app;
       emit appAdd(app);
     }
   }

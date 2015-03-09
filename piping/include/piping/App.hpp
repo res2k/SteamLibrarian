@@ -17,12 +17,10 @@ namespace piping
   {
     Q_OBJECT
   private:
-    /// App .acf name
-    QString m_acf;
     /// .acf data
     std::unique_ptr<vdf::vdf_ptree> m_acfData;
   public:
-    App(Library* lib, const QString& acf);
+    App(Library* lib);
     ~App();
 
     /// Set the .acf data
@@ -30,8 +28,6 @@ namespace piping
 
     /// Get library this app is in
     piping::Library* library() const;
-    /// Get .acf name
-    const QString& acfName() const;
     /// Get app name
     QString name() const;
 

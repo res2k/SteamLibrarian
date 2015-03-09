@@ -31,8 +31,10 @@ namespace piping
     QList<App*> m_apps;
     /// Library directory watcher
     QFileSystemWatcher* m_fsw;
-    /// Map from .acf name to m_apps index
-    QHash<QString, int> m_appObjMap;
+    /// Map from .acf name to App* object
+    QHash<QString, App*> m_acfAppMap;
+    /// Map from App* object name to m_apps index
+    QHash<App*, int> m_appObjMap;
     typedef std::pair<std::shared_ptr<vdf::vdf_ptree>, QString> acf_parse_result;
     /// Active watchers for .acf parsing
     QSet<QFutureWatcher<acf_parse_result>*> m_activeACFParseWatchers;
