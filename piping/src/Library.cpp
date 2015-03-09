@@ -95,20 +95,26 @@ namespace piping
   {
     App* app = m_acfAppMap.value(acfName, nullptr);
     if (!app) return;
-    emit appRemove(app);
 
-    int index = m_appObjMap[app];
-    int lastIndex = m_apps.count()-1;
-    if (index != lastIndex)
+    app->RemoveACF(acfName);
+    if (!app->HaveACFs())
     {
-      App* lastApp = m_apps[lastIndex];
-      m_apps[index] = m_apps[lastIndex];
-      m_appObjMap[lastApp] = index;
+      emit appRemove(app);
+
+      int index = m_appObjMap[app];
+      int lastIndex = m_apps.count() - 1;
+      if (index != lastIndex)
+      {
+        App* lastApp = m_apps[lastIndex];
+        m_apps[index] = m_apps[lastIndex];
+        m_appObjMap[lastApp] = index;
+      }
+      m_apps.takeLast();
+      m_appObjMap.remove(app);
+      m_acfAppMap.remove(acfName);
+      m_dirAppMap.remove(app->installDir());
+      app->deleteLater();
     }
-    m_apps.takeLast();
-    m_appObjMap.remove(app);
-    m_acfAppMap.remove(acfName);
-    app->deleteLater();
   }
 
   Library::acf_parse_result Library::ParseACFWorker(const QString& acfPath)
@@ -135,13 +141,23 @@ namespace piping
 
     if (vdf.first)
     {
-      App* app = new App(this);
-      app->SetACF(std::move (*(vdf.first)));
-      int index = m_apps.count();
-      m_apps.append(app);
-      m_appObjMap[app] = index;
-      m_acfAppMap[vdf.second] = app;
-      emit appAdd(app);
+      boost::optional<vdf::vdf_ptree> install_dir_child(vdf.first->get_child_optional(L"AppState.installdir"));
+      if (install_dir_child)
+      {
+        QString installDir(QString::fromStdWString(install_dir_child->data()));
+        App* app = m_dirAppMap.value(installDir, nullptr);
+        if (!app)
+        {
+          app = new App(this, installDir);
+          m_dirAppMap[installDir] = app;
+          int index = m_apps.count();
+          m_apps.append(app);
+          m_appObjMap[app] = index;
+          emit appAdd(app);
+        }
+        app->AddACF(vdf.second, std::move(*(vdf.first)));
+        m_acfAppMap[vdf.second] = app;
+      }
     }
   }
 } // namespace piping

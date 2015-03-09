@@ -14,6 +14,15 @@ ApplicationWindow {
 
     property var libs: new RedBlackTree.RedBlackTree()
 
+    // Can't add bindings as a ListModel element (I think), so update manually
+    function setAppName(app) {
+        var lib = app.library;
+        var modelIndex = libs.queryUserCount(lib);
+        var appsTree = libs.queryValue(lib);
+        modelIndex += appsTree.querySortedIndex(app);
+        appsModel.set(modelIndex, {"app": app.name, "library": lib.displayName});
+    }
+
     function addOneApp(lib, app) {
         var modelIndex = libs.queryUserCount(lib);
         var appsTree = libs.queryValue(lib);
@@ -21,6 +30,7 @@ ApplicationWindow {
         modelIndex += appsTree.querySortedIndex(app);
         appsModel.insert(modelIndex, {"app": app.name, "library": lib.displayName});
         libs.setUserCount(lib, appsTree.count());
+        app.nameChanged.connect(function() { setAppName(app); });
     }
 
     function addApp(app) {

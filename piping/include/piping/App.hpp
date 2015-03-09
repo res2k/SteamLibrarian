@@ -17,22 +17,37 @@ namespace piping
   {
     Q_OBJECT
   private:
+    /// App install dir name
+    QString m_installDir;
+    typedef std::pair<QString, std::unique_ptr<vdf::vdf_ptree>> acf_name_data_pair;
     /// .acf data
-    std::unique_ptr<vdf::vdf_ptree> m_acfData;
+    std::vector<acf_name_data_pair> m_acfData;
+    /// Comparison function for ACF data pairs
+    static bool ACFAppIDLower(const acf_name_data_pair& a, const acf_name_data_pair& b);
+    /// Comparison function for ACF data pair
+    static bool ACFNameCompare(const acf_name_data_pair& pair, const QString& name);
   public:
-    App(Library* lib);
+    App(Library* lib, const QString& installDir);
     ~App();
 
-    /// Set the .acf data
-    void SetACF(vdf::vdf_ptree&& acfData);
+    /// Add .acf data
+    void AddACF(const QString& acfName, vdf::vdf_ptree&& acfData);
+    /// Remove some .acf data
+    void RemoveACF(const QString& acfName);
+    /// Returns whether we have more than 0 ACFs.
+    bool HaveACFs() const;
 
     /// Get library this app is in
     piping::Library* library() const;
+    /// Get app install dir name
+    const QString& installDir() const;
     /// Get app name
     QString name() const;
 
     Q_PROPERTY(piping::Library* library READ library CONSTANT)
-    Q_PROPERTY(QString name READ name CONSTANT)
+    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+  signals:
+    void nameChanged();
   };
 } // namespace piping
 
