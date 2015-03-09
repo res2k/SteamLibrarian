@@ -21,6 +21,7 @@ namespace piping
     // Set up watcher for lib dir
     m_fsw = new QFileSystemWatcher(this);
     connect(m_fsw, &QFileSystemWatcher::directoryChanged, this, &Library::LibraryFolderChanged);
+    m_fsw->addPath(m_steamAppsPath);
 
     // Scan m_steamAppsPath for .acf files
     RescanForACFs();
