@@ -78,64 +78,22 @@ ApplicationWindow {
 
     menuBar: MenuBar {
         Menu {
-            title: qsTr("&File")
+            title: qsTr("&Tools")
+            MenuItem {
+                text: qsTr("St&art Steam")
+                enabled: (!Piping.steamRunning && !Piping.actionPending)
+                onTriggered: Piping.steamStart()
+            }
+            MenuItem {
+                text: qsTr("St&op Steam")
+                enabled: (Piping.steamRunning && !Piping.actionPending)
+                onTriggered: Piping.steamShutdown()
+            }
+            MenuSeparator {}
             MenuItem {
                 text: qsTr("E&xit")
                 onTriggered: Qt.quit();
             }
-        }
-    }
-
-    Grid {
-        id: grid1
-        anchors.right: parent.right
-        anchors.left: parent.left
-        anchors.top: parent.top
-        antialiasing: false
-        spacing: 6
-        columns: 2
-        anchors.rightMargin: 6
-        anchors.leftMargin: 6
-        anchors.topMargin: 6
-
-        Label {
-            id: label1
-            text: qsTr("Steam location:")
-        }
-
-        Label {
-            id: steamLabel
-            text: Piping.steamInstallPath
-        }
-
-        Label {
-            id: label2
-            text: qsTr("Steam running:")
-        }
-
-        Label {
-            text: Piping.steamRunning
-        }
-
-    }
-    Flow {
-        id: flow
-        anchors.left: grid1.left
-        anchors.leftMargin: 0
-        anchors.top: grid1.bottom
-        anchors.topMargin: 6
-        spacing: 3
-        enabled: (Piping.steamInstallPath != "")
-
-        Button {
-            text: "Start"
-            enabled: (!Piping.steamRunning && !Piping.actionPending)
-            onClicked: Piping.steamStart()
-        }
-        Button {
-            text: "Stop"
-            enabled: (Piping.steamRunning && !Piping.actionPending)
-            onClicked: Piping.steamShutdown()
         }
     }
 
@@ -147,7 +105,7 @@ ApplicationWindow {
         anchors.rightMargin: 6
         anchors.leftMargin: 6
         anchors.bottomMargin: 6
-        anchors.top: flow.bottom
+        anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.left: parent.left
