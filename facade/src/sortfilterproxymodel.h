@@ -90,6 +90,8 @@ public:
 
     int count() const;
     Q_INVOKABLE QJSValue get(int index) const;
+    Q_INVOKABLE int sourceIndex(int index) const;
+    Q_INVOKABLE int proxyIndex(int sourceIdx) const;
 
     void classBegin();
     void componentComplete();

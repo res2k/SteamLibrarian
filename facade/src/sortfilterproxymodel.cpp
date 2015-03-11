@@ -131,6 +131,16 @@ QJSValue SortFilterProxyModel::get(int idx) const
     return value;
 }
 
+int SortFilterProxyModel::sourceIndex(int idx) const
+{
+  return mapToSource(index(idx, 0)).row();
+}
+
+int SortFilterProxyModel::proxyIndex(int sourceIdx) const
+{
+  return mapFromSource(sourceModel()->index(sourceIdx, 0)).row();
+}
+
 void SortFilterProxyModel::classBegin()
 {
 }
