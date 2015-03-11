@@ -1,15 +1,22 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
+import QtQuick.Controls.Styles 1.3
+import QtQuick.Layouts 1.0
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import SteamLibrarian 1.0
 import "js/RedBlackTree.js" as RedBlackTree
 
 ApplicationWindow {
+    SystemPalette { id: palette; }
+
     id: applicationWindow1
     title: qsTr("Steam Librarian")
     width: 640
     height: 480
+    style: ApplicationWindowStyle {
+        background: Rectangle { color: palette.base }
+    }
     visible: true
 
     property var libs: new RedBlackTree.RedBlackTree()
@@ -20,7 +27,7 @@ ApplicationWindow {
         var modelIndex = libs.queryUserCount(lib);
         var appsTree = libs.queryValue(lib);
         modelIndex += appsTree.querySortedIndex(app);
-        appsModel.set(modelIndex, {"app": app.name, "library": lib.displayName});
+        appsModel.set(modelIndex, {"app": app.name, "library": lib.displayName, "appObj": app});
     }
 
     function addOneApp(lib, app) {
@@ -56,6 +63,9 @@ ApplicationWindow {
         }
         lib.appAdd.connect(addApp);
         lib.appRemove.connect(removeApp);
+
+        var libsModelIndex = libs.querySortedIndex(lib);
+        libsModel.insert(libsModelIndex, {"lib": lib, "name": lib.displayName});
     }
 
     function removeLibrary(lib) {
@@ -64,9 +74,14 @@ ApplicationWindow {
         var numApps = appsTree.count();
         libs.remove(lib);
         appsModel.remove(modelIndex, numApps);
+
+        var libsModelIndex = libs.querySortedIndex(lib);
+        libsModel.remove(libsModelIndex, 1);
     }
 
     Component.onCompleted: {
+        selectedAppPanel.libsModel = libsModel;
+
         for (var l = 0; l < Piping.libraries.count(); l++)
         {
             var lib = Piping.libraries.get(l);
@@ -107,7 +122,7 @@ ApplicationWindow {
         anchors.bottomMargin: 6
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        anchors.bottom: selectedAppPanel.top
         anchors.left: parent.left
         anchors.topMargin: 6
 
@@ -150,5 +165,105 @@ ApplicationWindow {
         ListModel {
             id: appsModel
         }
+
+        selection.onSelectionChanged: {
+            selectedAppPanel.app = (tableView.currentRow >= 0) ? appsModel.get(proxyModel.sourceIndex(tableView.currentRow)).appObj : null;
+        }
+    }
+
+    ListModel {
+        id: libsModel
+
+        function find(obj) {
+            return libs.querySortedIndex(obj);
+        }
+    }
+
+    Item {
+        id: selectedAppPanel
+        y: 419
+        height: grid.implicitHeight + grid.anchors.topMargin + grid.anchors.bottomMargin
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+
+        property var libsModel: null
+        property var app: null
+        property int appLibIndex: -1
+        onAppChanged: {
+            // Select app's current library in combo
+            if (app != null)
+            {
+                libCombo.currentIndex = appLibIndex = libsModelProxy.find(app.library);
+            }
+        }
+
+        SortFilterProxyModel {
+            id: libsModelProxy
+            source: libsModel.count > 0 ? libsModel : null
+
+            sortOrder: Qt.AscendingOrder
+            sortCaseSensitivity: Qt.CaseInsensitive
+            sortRole: libsModel.count > 0 ? "name" : ""
+
+            function find(obj) {
+                return source != null ? proxyIndex(source.find(obj)) : -1;
+            }
+        }
+
+        Rectangle {
+            id: rectangle1
+            color: palette.button
+            border.width: 0
+            anchors.fill: parent
+
+            GridLayout {
+                id: grid
+
+                anchors.top: parent.top
+                anchors.topMargin: 6
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 6
+                anchors.right: parent.right
+                anchors.rightMargin: 6
+                anchors.left: parent.left
+                anchors.leftMargin: 6
+                columns: 3
+                rows: 2
+
+                Label {
+                    id: label1
+                    Layout.columnSpan: 3
+                    Layout.fillWidth: true
+                    text: selectedAppPanel.app != null ? selectedAppPanel.app.name : qsTr("Select a game.")
+                    font.pointSize: 10
+                }
+
+                Label {
+                    id: label2
+                    visible: selectedAppPanel.app != null
+                    text: qsTr("Library:")
+                }
+
+                ComboBox {
+                    id: libCombo
+                    visible: selectedAppPanel.app != null
+                    Layout.fillWidth: true
+                    model: libsModelProxy
+                    textRole: "name"
+                }
+
+                Button {
+                    id: button1
+                    visible: selectedAppPanel.app != null
+                    text: qsTr("&Move")
+                    enabled: libCombo.currentIndex != selectedAppPanel.appLibIndex
+                }
+            }
+        }
+
     }
 }
