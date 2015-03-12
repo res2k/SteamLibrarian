@@ -190,6 +190,12 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
 
+        Behavior on height {
+            NumberAnimation {
+                easing { type: Easing.InOutQuad }
+            }
+        }
+
         property var libsModel: null
         property var app: null
         property int appLibIndex: -1
@@ -235,34 +241,46 @@ ApplicationWindow {
                 rows: 2
 
                 Label {
-                    id: label1
+                    id: gameLabel
                     Layout.columnSpan: 3
                     Layout.fillWidth: true
-                    text: selectedAppPanel.app != null ? selectedAppPanel.app.name : qsTr("Select a game.")
+                    text: qsTr("Select a game.")
                     font.pointSize: 10
                 }
 
                 Label {
-                    id: label2
-                    visible: selectedAppPanel.app != null
+                    id: libLabel
+                    visible: false
                     text: qsTr("Library:")
                 }
 
                 ComboBox {
                     id: libCombo
-                    visible: selectedAppPanel.app != null
+                    visible: false
                     Layout.fillWidth: true
                     model: libsModelProxy
                     textRole: "name"
                 }
 
                 Button {
-                    id: button1
-                    visible: selectedAppPanel.app != null
+                    id: moveButton
+                    visible: false
                     text: qsTr("&Move")
                     enabled: libCombo.currentIndex != selectedAppPanel.appLibIndex
                 }
             }
+
+            states: [
+                State {
+                    name: "GAME_SELECTED"
+                    when: selectedAppPanel.app != null
+                    PropertyChanges { target: gameLabel; text: selectedAppPanel.app.name }
+                    PropertyChanges { target: libLabel; visible: true }
+                    PropertyChanges { target: libCombo; visible: true }
+                    PropertyChanges { target: moveButton; visible: true }
+                }
+
+            ]
         }
 
     }
