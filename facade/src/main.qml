@@ -91,24 +91,39 @@ ApplicationWindow {
         Piping.libraries.libraryRemove.connect(removeLibrary);
     }
 
-    menuBar: MenuBar {
-        Menu {
-            title: qsTr("&Tools")
-            MenuItem {
-                text: qsTr("St&art Steam")
-                enabled: (!Piping.steamRunning && !Piping.actionPending)
-                onTriggered: Piping.steamStart()
+    RowLayout {
+        id: rowLayout1
+        height: implicitHeight
+        anchors.right: parent.right
+        anchors.rightMargin: 6
+        anchors.left: parent.left
+        anchors.leftMargin: 6
+        anchors.top: parent.top
+        anchors.topMargin: 6
+
+        Button {
+            id: toolButton1
+            text: "Tools"
+            menu: Menu {
+                title: qsTr("&Tools")
+                MenuItem {
+                    text: qsTr("St&art Steam")
+                    enabled: (!Piping.steamRunning && !Piping.actionPending)
+                    onTriggered: Piping.steamStart()
+                }
+                MenuItem {
+                    text: qsTr("St&op Steam")
+                    enabled: (Piping.steamRunning && !Piping.actionPending)
+                    onTriggered: Piping.steamShutdown()
+                }
+                MenuSeparator {}
+                MenuItem {
+                    text: qsTr("E&xit")
+                    onTriggered: Qt.quit();
+                }
             }
-            MenuItem {
-                text: qsTr("St&op Steam")
-                enabled: (Piping.steamRunning && !Piping.actionPending)
-                onTriggered: Piping.steamShutdown()
-            }
-            MenuSeparator {}
-            MenuItem {
-                text: qsTr("E&xit")
-                onTriggered: Qt.quit();
-            }
+
+            // TODO: Appearance of a tool button
         }
     }
 
@@ -120,7 +135,7 @@ ApplicationWindow {
         anchors.rightMargin: 6
         anchors.leftMargin: 6
         anchors.bottomMargin: 6
-        anchors.top: parent.top
+        anchors.top: rowLayout1.bottom
         anchors.right: parent.right
         anchors.bottom: selectedAppPanel.top
         anchors.left: parent.left
