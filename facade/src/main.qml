@@ -293,7 +293,12 @@ ApplicationWindow {
                             text: qsTr("&Move")
                             enabled: libCombo.currentIndex != selectedAppPanel.appLibIndex
 
-                            onClicked: stackView.push(workPanel)
+                            onClicked: {
+                                stackView.push(workPanel);
+                                workPanel.addStep(Qt.createComponent("steps/StepWait.qml"));
+                                var stepComp = Qt.createComponent("steps/StepWaitSteamStop.qml");
+                                workPanel.addStep(stepComp);
+                            }
                         }
                     }
 
@@ -319,15 +324,94 @@ ApplicationWindow {
         width: parent.width
         height: parent.height
 
-        Rectangle {
-            id: fillRect
-            border.width: 0
-            anchors.fill: parent
+        Timer {
+            id: triggerTimer
+            interval: 0
+        }
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: stackView.pop()
+        Component.onCompleted: {
+            triggerTimer.triggered.connect(nextStep);
+        }
+
+        property var steps: []
+        property var currentItem: null
+
+        function addStep(comp) {
+            console.log(comp);
+            if (comp.status !== Component.Ready)
+            {
+                console.log(comp.errorString());
+                return;
             }
+            var step = comp.createObject(workPanel);
+            console.log(step);
+            steps.push(step);
+            if (steps.length == 1)
+            {
+                // First step
+                triggerTimer.start();
+            }
+        }
+
+        function setCurrentUI(url) {
+            var wrapperItemComp = Qt.createComponent("WorkPanelItem.qml");
+            if (wrapperItemComp.status !== Component.Ready)
+            {
+                console.log(wrapperItemComp.errorString());
+            }
+            var wrapperItem = wrapperItemComp.createObject(workPanel);
+            wrapperItem.anchors.fill = workPanel;
+
+            console.log(url);
+            var item = null;
+            if (url != undefined)
+            {
+                var comp = Qt.createComponent(url);
+                console.log(comp);
+                if (comp.status === Component.Ready)
+                {
+                    item = comp.createObject(wrapperItem);
+                }
+                else
+                {
+                    console.log(comp.errorString());
+                }
+                console.log(item);
+            }
+
+            if (currentItem != null) currentItem.fadingVisibility = false;
+            if (item !== null)
+            {
+                item.anchors.left = wrapperItem.left;
+                item.anchors.right = wrapperItem.right;
+                item.anchors.verticalCenter = wrapperItem.verticalCenter;
+                item.anchors.leftMargin = 6;
+                item.anchors.rightMargin = 6;
+                item.visible = true;
+            }
+            currentItem = wrapperItem;
+            currentItem.fadingVisibility = true;
+            return item;
+        }
+
+        function stepCompleted(success) {
+            if (success && (steps.length > 0))
+            {
+                nextStep();
+            }
+            else
+            {
+                // Display something like "User cancelled"?
+                stackView.pop();
+                setCurrentUI();
+            }
+        }
+
+        function nextStep() {
+            var step = steps.shift();
+            console.log(step);
+            step.stepCompleted.connect(stepCompleted);
+            step.perform(workPanel);
         }
     }
 
