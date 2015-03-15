@@ -54,9 +54,10 @@ namespace piping
     Q_INVOKABLE void StopMutexWait();
     /// Start timer for periodic mutex check
     Q_INVOKABLE void StartMutexTimer();
-    private slots:
     /// Called by the mutex check timer
     void checkTimerTimeout();
+    /// Called when application state changes
+    void applicationStateChanged(Qt::ApplicationState state);
   };
 } // namespace piping
 

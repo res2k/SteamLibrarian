@@ -1,13 +1,21 @@
 #include "RunningStateDetector.hpp"
 
+#include <QApplication>
+
 namespace piping
 {
+  static const int GetCheckTimerInterval(Qt::ApplicationState appState)
+  {
+    return appState == Qt::ApplicationActive ? 500 : 3000;
+  }
+
   Piping::RunningStateDetector::RunningStateDetector(Piping* owner)
 	  : QObject(owner), m_steamMutex(NULL), m_waitMutexThread(nullptr)
   {
     m_steamMutexCheckTimer.setTimerType(Qt::VeryCoarseTimer);
-    m_steamMutexCheckTimer.setInterval(2000); // TODO: Might want different interval in background vs foreground
+    m_steamMutexCheckTimer.setInterval(GetCheckTimerInterval(QApplication::applicationState()));
     connect(&m_steamMutexCheckTimer, &QTimer::timeout, this, &RunningStateDetector::checkTimerTimeout);
+    connect(qApp, &QApplication::applicationStateChanged, this, &RunningStateDetector::applicationStateChanged);
 
     if (!TryOpenMutex())
       StartMutexTimer();
@@ -72,6 +80,11 @@ namespace piping
     {
       m_steamMutexCheckTimer.stop();
     }
+  }
+
+  void Piping::RunningStateDetector::applicationStateChanged(Qt::ApplicationState state)
+  {
+    m_steamMutexCheckTimer.setInterval(GetCheckTimerInterval(state));
   }
 
   //--------------------------------------------------------------------------
