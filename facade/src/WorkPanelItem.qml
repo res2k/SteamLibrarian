@@ -6,14 +6,21 @@ Item {
 
     opacity: fadingVisibility ? 1 : 0
     Behavior on opacity {
-        PropertyAnimation {
+        OpacityAnimator {
+            target: workPanelItem
             id: opacityAnim
-            onRunningChanged: {
-                if (!opacityAnim.running && !workPanelItem.fadingVisibility)
-                {
-                    workPanelItem.destroy();
-                }
-            }
+        }
+    }
+
+    property bool _wasVisible: false
+    onOpacityChanged: {
+        if (fadingVisibility)
+        {
+            _wasVisible = true;
+        }
+        else if (_wasVisible && (opacity < 0.001))
+        {
+            workPanelItem.destroy();
         }
     }
 }
