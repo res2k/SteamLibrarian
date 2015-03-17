@@ -337,14 +337,12 @@ ApplicationWindow {
         property var currentItem: null
 
         function addStep(comp) {
-            console.log(comp);
             if (comp.status !== Component.Ready)
             {
                 console.log(comp.errorString());
                 return;
             }
             var step = comp.createObject(workPanel);
-            console.log(step);
             steps.push(step);
             if (steps.length == 1)
             {
@@ -362,12 +360,10 @@ ApplicationWindow {
             var wrapperItem = wrapperItemComp.createObject(workPanel);
             wrapperItem.anchors.fill = workPanel;
 
-            console.log(url);
             var item = null;
             if (url != undefined)
             {
                 var comp = Qt.createComponent(url);
-                console.log(comp);
                 if (comp.status === Component.Ready)
                 {
                     item = comp.createObject(wrapperItem);
@@ -376,7 +372,6 @@ ApplicationWindow {
                 {
                     console.log(comp.errorString());
                 }
-                console.log(item);
             }
 
             if (currentItem != null) currentItem.fadingVisibility = false;
@@ -409,7 +404,6 @@ ApplicationWindow {
 
         function nextStep() {
             var step = steps.shift();
-            console.log(step);
             step.stepCompleted.connect(stepCompleted);
             step.perform(workPanel);
         }

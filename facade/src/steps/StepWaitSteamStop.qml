@@ -6,9 +6,7 @@ QtObject {
     signal stepCompleted(bool succeeded)
 
     function perform(steps) {
-        console.log(steps);
         // Check if Steam is running
-        console.log(Piping.steamRunning);
         if (!Piping.steamRunning)
         {
             //  if not, proceed
