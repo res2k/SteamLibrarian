@@ -3,8 +3,11 @@
         <file>main.qml</file>
         <file>WorkPanelItem.qml</file>
         <file>js/RedBlackTree.js</file>
+        <file>steps/StepShowMessage.qml</file>
         <file>steps/StepWait.qml</file>
         <file>steps/StepWaitSteamStop.qml</file>
+        <file>steps/ui/UiShowMessage.qml</file>
+        <file>steps/ui/UiShowMessageForm.ui.qml</file>
         <file>steps/ui/UiSteamStopQuery.qml</file>
         <file>steps/ui/UiSteamStopQueryForm.ui.qml</file>
         <file>steps/ui/UiWait.qml</file>

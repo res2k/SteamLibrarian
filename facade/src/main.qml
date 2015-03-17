@@ -403,17 +403,29 @@ ApplicationWindow {
             return item;
         }
 
-        function stepCompleted(success) {
-            if (success && (steps.length > 0))
+        function stepCompleted(success, errorMessage) {
+            if (success)
             {
-                nextStep();
+                if (steps.length > 0)
+                {
+                    nextStep();
+                    return;
+                }
             }
             else
             {
-                // Display something like "User cancelled"?
-                stackView.pop();
-                setCurrentUI();
+                // Cancel all work.
+                steps = [];
+                // Display message, if any
+                if (errorMessage !== undefined)
+                {
+                    addStep(Qt.createComponent("steps/StepShowMessage.qml"), {"message": errorMessage});
+                    return;
+                }
             }
+            // We're done.
+            stackView.pop();
+            setCurrentUI();
         }
 
         function nextStep() {
