@@ -3,6 +3,7 @@
 #include <QtQml>
 
 #include "piping/App.hpp"
+#include "piping/AppMover.hpp"
 #include "piping/Libraries.hpp"
 #include "piping/Library.hpp"
 #include "piping/Piping.hpp"
@@ -23,5 +24,7 @@ namespace piping
       QStringLiteral("For access from 'Piping' only"));
     qmlRegisterUncreatableType<Library>(uri, versionMajor, versionMinor, "Library",
       QStringLiteral("For access from Libraries only"));
+    qmlRegisterUncreatableType<AppMover>(uri, versionMajor, versionMinor, "AppMover",
+      QStringLiteral("For access from App only"));
   }
 } // namespace piping

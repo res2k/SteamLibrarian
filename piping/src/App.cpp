@@ -1,5 +1,6 @@
 #include "piping/App.hpp"
 
+#include "piping/AppMover.hpp"
 #include "piping/Library.hpp"
 
 #include "vdf.hpp"
@@ -81,4 +82,8 @@ namespace piping
     return assembledName.isEmpty() ? QStringLiteral("???") : assembledName;
   }
 
+  QObject* App::queryMover(piping::Library* destination)
+  {
+    return new AppMover(this, destination);
+  }
 } // namespace piping

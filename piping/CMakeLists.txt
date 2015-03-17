@@ -1,5 +1,6 @@
 add_library(Piping
             src/App.cpp
+            src/AppMover.cpp
             src/Libraries.cpp
             src/Library.cpp
             src/Piping.cpp
@@ -9,6 +10,7 @@ add_library(Piping
             src/vdf.cpp
             src/vdf.hpp
             include/piping/App.hpp
+            include/piping/AppMover.hpp
             include/piping/Libraries.hpp
             include/piping/Library.hpp
             include/piping/Piping.hpp

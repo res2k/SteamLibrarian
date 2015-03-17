@@ -44,6 +44,9 @@ namespace piping
     /// Get app name
     QString name() const;
 
+    /// Query an object to perform a move to another library.
+    Q_INVOKABLE QObject* queryMover(piping::Library* destination);
+
     Q_PROPERTY(piping::Library* library READ library CONSTANT)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
   signals:
