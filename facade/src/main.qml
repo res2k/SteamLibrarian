@@ -336,13 +336,20 @@ ApplicationWindow {
         property var steps: []
         property var currentItem: null
 
-        function addStep(comp) {
+        function addStep(comp, props) {
             if (comp.status !== Component.Ready)
             {
                 console.log(comp.errorString());
                 return;
             }
             var step = comp.createObject(workPanel);
+            if (props !== undefined)
+            {
+                for (var key in props)
+                {
+                    step[key] = props[key];
+                }
+            }
             steps.push(step);
             if (steps.length == 1)
             {
@@ -351,7 +358,7 @@ ApplicationWindow {
             }
         }
 
-        function setCurrentUI(url) {
+        function setCurrentUI(url, props) {
             var wrapperItemComp = Qt.createComponent("WorkPanelItem.qml");
             if (wrapperItemComp.status !== Component.Ready)
             {
@@ -367,6 +374,13 @@ ApplicationWindow {
                 if (comp.status === Component.Ready)
                 {
                     item = comp.createObject(wrapperItem);
+                    if (props !== undefined)
+                    {
+                        for (var key in props)
+                        {
+                            item[key] = props[key];
+                        }
+                    }
                 }
                 else
                 {
