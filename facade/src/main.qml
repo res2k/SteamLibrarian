@@ -295,9 +295,13 @@ ApplicationWindow {
 
                             onClicked: {
                                 stackView.push(workPanel);
-                                workPanel.addStep(Qt.createComponent("steps/StepWait.qml"));
+                                //workPanel.addStep(Qt.createComponent("steps/StepWait.qml"));
                                 var stepComp = Qt.createComponent("steps/StepWaitSteamStop.qml");
                                 workPanel.addStep(stepComp);
+                                var moveComp = Qt.createComponent("steps/StepPerformMove.qml");
+                                workPanel.addStep(moveComp,
+                                                  {"app": selectedAppPanel.app,
+                                                   "destinationLib": libsModel.get(libsModelProxy.sourceIndex(libCombo.currentIndex)).lib});
                             }
                         }
                     }
