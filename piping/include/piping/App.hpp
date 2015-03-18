@@ -47,6 +47,12 @@ namespace piping
     /// Query an object to perform a move to another library.
     Q_INVOKABLE QObject* queryMover(piping::Library* destination);
 
+    /**
+     * Get a list of file and directory names, relative to the library directory,
+     * with files associated with this app
+     */
+    QStringList GetAppFiles() const;
+
     Q_PROPERTY(piping::Library* library READ library CONSTANT)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
   signals:

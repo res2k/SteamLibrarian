@@ -3,6 +3,9 @@
 #include "piping/AppMover.hpp"
 #include "piping/Library.hpp"
 
+#include <QDir>
+#include <QStringBuilder>
+
 #include "vdf.hpp"
 
 namespace piping
@@ -85,5 +88,33 @@ namespace piping
   QObject* App::queryMover(piping::Library* destination)
   {
     return new AppMover(this, destination);
+  }
+
+  QStringList App::GetAppFiles() const
+  {
+    // Unique install dirs
+    QSet<QString> installdirs;
+    for (const auto& acfPair : m_acfData)
+    {
+      // Add data files
+      boost::optional<vdf::vdf_ptree> installdir_child(acfPair.second->get_child_optional(L"AppState.installdir"));
+      if (!installdir_child) continue;
+      installdirs.insert(QString::fromStdWString(installdir_child->data()));
+    }
+
+    QStringList files;
+    Q_FOREACH(const QString& installdir, installdirs)
+    {
+      files.append(QStringLiteral("common") % QDir::separator() % installdir);
+    }
+    for (const auto& acfPair : m_acfData)
+    {
+      // Add .acf files
+      files.append(acfPair.first);
+
+      // TODO: Add files from downloading/
+    }
+
+    return std::move(files);
   }
 } // namespace piping
