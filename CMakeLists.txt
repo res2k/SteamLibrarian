@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 PROJECT(SteamLibrarian)
 
-find_package(Qt5 REQUIRED COMPONENTS Concurrent Qml Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Concurrent Qml Widgets WinExtras)
 set(CMAKE_AUTOMOC ON)
 set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
 

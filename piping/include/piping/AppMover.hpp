@@ -5,6 +5,8 @@
 #define __PIPING_APPMOVER_HPP__
 
 #include <QObject>
+#include <QPointer>
+#include <QThread>
 
 namespace piping
 {
@@ -15,10 +17,17 @@ namespace piping
   {
     Q_OBJECT
   private:
+    /// App to move
+    App* m_app;
+    /// Destination library
+    Library* m_destLib;
+    /// Thread used to do the actual work
+    QPointer<QThread> m_thread;
     /// Error string
     QString m_errorString;
   public:
     AppMover(App* app, Library* destination, QObject* parent = nullptr);
+    ~AppMover();
 
     /// Perform the moving action.
     Q_INVOKABLE void perform();
@@ -46,7 +55,16 @@ namespace piping
     /// Error string changed
     void errorStringChanged();
   private:
-    void setErrorString(const QString& errorString);
+    void SetErrorString(const QString& errorString);
+    /// Discard the thread
+    void DiscardThread();
+
+    /// Worker ran successfully
+    void workerSucceeded();
+    /// Worker ran, but action was cancelled by user
+    void workerCancelled();
+    /// Worker failed
+    void workerFailed(const QString& message);
   };
 } // namespace piping
 
