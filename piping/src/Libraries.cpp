@@ -9,6 +9,8 @@
 #include <QSet>
 #include <QStringBuilder>
 
+#include <boost/algorithm/cxx11/all_of.hpp>
+
 #include "vdf.hpp"
 
 #undef foreach
@@ -80,6 +82,14 @@ namespace piping
     rescanWatcher.setFuture(*pendingRescan);
   }
 
+  struct is_digit
+  {
+    bool operator()(wchar_t ch) const
+    {
+      return (ch >= '0') && (ch <= '9');
+    }
+  };
+
   Libraries::RescanResultType Libraries::RescanLibraryFoldersVDFWorker()
   {
     QSet<QString> newLibs;
@@ -101,8 +111,11 @@ namespace piping
         {
           for(const vdf::vdf_ptree::const_iterator::value_type& folder_pair : *folders_key)
           {
-            QFileInfo lib_dir_qfi(QString::fromStdWString(folder_pair.second.data()));
-            newLibs.insert(lib_dir_qfi.canonicalFilePath());
+            if (boost::algorithm::all_of(folder_pair.first, is_digit()))
+            {
+              QFileInfo lib_dir_qfi(QString::fromStdWString(folder_pair.second.data()));
+              newLibs.insert(lib_dir_qfi.canonicalFilePath());
+            }
           }
         }
       }
