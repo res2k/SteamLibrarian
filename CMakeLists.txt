@@ -15,7 +15,8 @@ add_subdirectory(piping)
 add_executable(SteamLibrarian main.cpp)
 target_link_libraries(SteamLibrarian
 	              Facade Piping
-		      Qt5::Qml Qt5::Widgets)
+		      Qt5::Qml Qt5::Widgets
+                      uxtheme.lib)
 
 add_library(QmlSteamLibrarian SHARED
             plugin/SteamLibrarian.hpp
