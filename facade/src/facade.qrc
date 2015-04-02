@@ -4,11 +4,15 @@
         <file>WorkPanelItem.qml</file>
         <file>js/RedBlackTree.js</file>
         <file>steps/StepPerformMove.qml</file>
+        <file>steps/StepPerformUndo.qml</file>
+        <file>steps/StepQueryUndo.qml</file>
         <file>steps/StepShowMessage.qml</file>
         <file>steps/StepWait.qml</file>
         <file>steps/StepWaitSteamStop.qml</file>
         <file>steps/ui/UiPerformMove.qml</file>
         <file>steps/ui/UiPerformMoveForm.ui.qml</file>
+        <file>steps/ui/UiQueryUndo.qml</file>
+        <file>steps/ui/UiQueryUndoForm.ui.qml</file>
         <file>steps/ui/UiShowMessage.qml</file>
         <file>steps/ui/UiShowMessageForm.ui.qml</file>
         <file>steps/ui/UiSteamStopQuery.qml</file>

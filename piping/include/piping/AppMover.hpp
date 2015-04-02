@@ -17,14 +17,22 @@ namespace piping
   {
     Q_OBJECT
   private:
+    /// Files to move
+    QList<QPair<QString, QString>> m_files;
     /// App to move
     App* m_app;
     /// Destination library
     Library* m_destLib;
+    /// Whether to enable recursion in the worker
+    bool m_recurse;
     /// Thread used to do the actual work
     QPointer<QThread> m_thread;
     /// Error string
     QString m_errorString;
+    /// Undo data from worker
+    QList<QPair<QString, QString>> m_undoData;
+
+    AppMover(QList<QPair<QString, QString>> files, QObject* parent = nullptr);
   public:
     AppMover(App* app, Library* destination, QObject* parent = nullptr);
     ~AppMover();
@@ -59,6 +67,8 @@ namespace piping
     /// Discard the thread
     void DiscardThread();
 
+    /// Undo data from worker
+    void workerUndoData(QList<QPair<QString, QString>> undoData);
     /// Worker ran successfully
     void workerSucceeded();
     /// Worker ran, but action was cancelled by user

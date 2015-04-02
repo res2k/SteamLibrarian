@@ -3,6 +3,8 @@ add_library(Piping
             src/AppMover.cpp
             src/AppMoverWorker.cpp
             src/AppMoverWorker.hpp
+            src/AppMoverWorker_FileOperationProgressSink.cpp
+            src/AppMoverWorker_FileOperationProgressSink.hpp
             src/Libraries.cpp
             src/Library.cpp
             src/Piping.cpp
