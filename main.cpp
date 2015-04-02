@@ -1,3 +1,4 @@
+#include <QtQml>
 #include <QApplication>
 #include <QFont>
 #include <QQmlApplicationEngine>
@@ -26,6 +27,7 @@ int main(int argc, char *argv[])
 
     piping::RegisterTypes("SteamLibrarian", 1, 0);
     facade::RegisterTypes("SteamLibrarian", 1, 0);
+    qmlProtectModule("SteamLibrarian", 1);
 
     QQmlApplicationEngine engine;
     facade::Start(engine);
