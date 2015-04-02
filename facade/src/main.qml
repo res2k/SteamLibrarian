@@ -338,6 +338,7 @@ ApplicationWindow {
         }
 
         property var steps: []
+        property var currentStep: null
         property var currentItem: null
 
         function addStep(comp, props) {
@@ -355,7 +356,7 @@ ApplicationWindow {
                 }
             }
             steps.push(step);
-            if (steps.length == 1)
+            if ((steps.length == 1) && (currentStep === null))
             {
                 // First step
                 triggerTimer.start();
@@ -420,6 +421,7 @@ ApplicationWindow {
             {
                 // Cancel all work.
                 steps = [];
+                currentStep = null;
                 // Display message, if any
                 if (errorMessage !== undefined)
                 {
@@ -428,12 +430,14 @@ ApplicationWindow {
                 }
             }
             // We're done.
+            currentStep = null;
             stackView.pop();
             setCurrentUI();
         }
 
         function nextStep() {
             var step = steps.shift();
+            currentStep = step;
             step.stepCompleted.connect(stepCompleted);
             step.perform(workPanel);
         }
