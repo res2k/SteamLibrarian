@@ -1,5 +1,6 @@
 qt5_add_resources(FACADE_QRC src/facade.qrc OPTIONS --compress 9 --threshold 0)
 add_library(Facade
+            src/RedBlackTree.hpp
             src/RegisterTypes.cpp
             src/sortfilterproxymodel.cpp
             src/sortfilterproxymodel.h
