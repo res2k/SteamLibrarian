@@ -73,9 +73,6 @@ ApplicationWindow {
                 }
                 lib.appAdd.connect(addApp);
                 lib.appRemove.connect(removeApp);
-
-                var libsModelIndex = libs.querySortedIndex(lib);
-                libsModel.insert(libsModelIndex, {"lib": lib, "name": lib.displayName});
             }
 
             function removeLibrary(lib) {
@@ -84,14 +81,9 @@ ApplicationWindow {
                 var numApps = appsTree.count();
                 libs.remove(lib);
                 appsModel.remove(modelIndex, numApps);
-
-                var libsModelIndex = libs.querySortedIndex(lib);
-                libsModel.remove(libsModelIndex, 1);
             }
 
             Component.onCompleted: {
-                selectedAppPanel.libsModel = libsModel;
-
                 for (var l = 0; l < Piping.libraries.count(); l++)
                 {
                     var lib = Piping.libraries.get(l);
@@ -196,12 +188,9 @@ ApplicationWindow {
                 }
             }
 
-            ListModel {
+            LibrariesModel {
                 id: libsModel
-
-                function find(obj) {
-                    return libs.querySortedIndex(obj);
-                }
+                libraries: Piping.libraries
             }
 
             Item {
@@ -221,7 +210,7 @@ ApplicationWindow {
                     }
                 }
 
-                property var libsModel: null
+                property var libsModel: appsListPage.libsModel
                 property var app: null
                 property int appLibIndex: -1
                 onAppChanged: {
@@ -307,7 +296,7 @@ ApplicationWindow {
                                 var moveComp = Qt.createComponent("steps/StepPerformMove.qml");
                                 workPanel.addStep(moveComp,
                                                   {"app": selectedAppPanel.app,
-                                                   "destinationLib": libsModel.get(libsModelProxy.sourceIndex(libCombo.currentIndex)).lib});
+                                                   "destinationLib": libsModel.get(libsModelProxy.sourceIndex(libCombo.currentIndex))});
                             }
                         }
                     }

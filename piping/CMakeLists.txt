@@ -21,7 +21,6 @@ add_library(Piping
             include/piping/RegisterTypes.hpp
             include/piping/vdf_fwd.hpp
            )
-target_include_directories(Piping PUBLIC include)
-target_include_directories(Piping PRIVATE ${Boost_INCLUDE_DIR})
+target_include_directories(Piping PUBLIC include ${Boost_INCLUDE_DIR})
 target_link_libraries(Piping Qt5::Core Qt5::Concurrent Qt5::Qml Qt5::Widgets Qt5::WinExtras
                       ${Boost_FILESYSTEM_LIBRARY} ${Boost_IOSTREAMS_LIBRARY} ${Boost_SYSTEM_LIBRARY})
