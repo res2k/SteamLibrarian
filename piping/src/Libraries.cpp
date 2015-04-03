@@ -114,6 +114,7 @@ namespace piping
             if (boost::algorithm::all_of(folder_pair.first, is_digit()))
             {
               QFileInfo lib_dir_qfi(QString::fromStdWString(folder_pair.second.data()));
+              if (!lib_dir_qfi.exists()) continue;
               newLibs.insert(lib_dir_qfi.canonicalFilePath());
             }
           }
