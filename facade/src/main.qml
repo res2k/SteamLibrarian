@@ -270,7 +270,13 @@ ApplicationWindow {
                             Layout.columnSpan: 3
                             Layout.fillWidth: true
                             text: qsTr("Select a game.")
-                            font.pointSize: 10
+
+                            property real largeFontSize
+
+                            Component.onCompleted: {
+                                // Scale up font
+                                largeFontSize = this.font.pointSize * 1.25;
+                            }
                         }
 
                         Label {
@@ -310,7 +316,7 @@ ApplicationWindow {
                         State {
                             name: "GAME_SELECTED"
                             when: selectedAppPanel.app != null
-                            PropertyChanges { target: gameLabel; text: selectedAppPanel.app.name }
+                            PropertyChanges { target: gameLabel; text: selectedAppPanel.app.name; font.pointSize: gameLabel.largeFontSize }
                             PropertyChanges { target: libLabel; visible: true }
                             PropertyChanges { target: libCombo; visible: true }
                             PropertyChanges { target: moveButton; visible: true }
