@@ -13,3 +13,9 @@ add_library(Facade
            )
 target_include_directories(Facade PUBLIC include)
 target_link_libraries(Facade Qt5::Core Qt5::Qml)
+
+if(CXXTEST_FOUND)
+    CXXTEST_ADD_TEST(test_Facade test_Facade.cpp
+                     ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_RedBlackTree.hpp)
+    target_include_directories(test_Facade PRIVATE ${Boost_INCLUDE_DIR})
+endif()
