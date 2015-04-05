@@ -9,6 +9,13 @@ set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.57 REQUIRED filesystem iostreams system)
 add_definitions(-DBOOST_ALL_NO_LIB)
 
+find_package(CxxTest)
+
+if(CXXTEST_FOUND)
+    include_directories(${CXXTEST_INCLUDE_DIR})
+    enable_testing()
+endif()
+
 add_subdirectory(facade)
 add_subdirectory(piping)
 
