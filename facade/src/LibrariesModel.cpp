@@ -2,6 +2,8 @@
 
 #include "piping/Library.hpp"
 
+#include "FormatByteAmount.hpp"
+
 namespace facade
 {
   LibrariesModel::LibrariesModel(QObject* parent) : QAbstractListModel(parent)
@@ -77,7 +79,7 @@ namespace facade
     case LibRole:
       return QVariant::fromValue(lib);
     case AvailableSpaceRole:
-      return QString::number(lib->freeSpace());
+      return FormatByteAmount(lib->freeSpace(), roundDown);
     default:
       break;
     }
