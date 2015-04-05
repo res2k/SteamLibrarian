@@ -57,6 +57,7 @@ namespace facade
     QHash<int, QByteArray> roles(QAbstractListModel::roleNames());
     roles[LibRole] = "lib";
     roles[NameRole] = "name";
+    roles[AvailableSpaceRole] = "available";
     return roles;
   }
 
@@ -75,6 +76,8 @@ namespace facade
       return lib->displayName();
     case LibRole:
       return QVariant::fromValue(lib);
+    case AvailableSpaceRole:
+      return QString::number(lib->freeSpace());
     default:
       break;
     }

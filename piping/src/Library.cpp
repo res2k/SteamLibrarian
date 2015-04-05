@@ -42,6 +42,12 @@ namespace piping
 
   const QString& Library::path() const { return m_path;  }
 
+  quint64 Library::freeSpace() const
+  {
+    QStorageInfo si(m_path);
+    return si.bytesAvailable();
+  }
+
   int Library::count() const { return m_apps.count(); }
   
   App* Library::get(int index) const { return m_apps[index]; }

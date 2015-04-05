@@ -27,7 +27,8 @@ namespace facade
     enum LibraryRoles
     {
       LibRole = Qt::UserRole+1,
-      NameRole
+      NameRole,
+      AvailableSpaceRole
     };
     LibrariesModel(QObject* parent = nullptr);
 

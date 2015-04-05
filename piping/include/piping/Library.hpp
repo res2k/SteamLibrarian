@@ -48,6 +48,8 @@ namespace piping
     QString displayName() const;
     /// Get library path
     const QString& path() const;
+    /// Get free space available on library disk
+    quint64 freeSpace() const;
 
     /// Get number of apps
     Q_INVOKABLE int count() const;
