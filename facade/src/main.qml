@@ -8,7 +8,6 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 import SteamLibrarian 1.0
-import "js/RedBlackTree.js" as RedBlackTree
 
 ApplicationWindow {
     SystemPalette { id: palette; }
@@ -22,8 +21,6 @@ ApplicationWindow {
     }
     visible: true
 
-    property var libs: new RedBlackTree.RedBlackTree()
-
     StackView {
         id: stackView
         anchors.fill: parent
@@ -32,68 +29,6 @@ ApplicationWindow {
             id: appsListPage
             width: parent.width
             height: parent.height
-
-            // Can't add bindings as a ListModel element (I think), so update manually
-            function setAppName(app) {
-                var lib = app.library;
-                var modelIndex = libs.queryUserCount(lib);
-                var appsTree = libs.queryValue(lib);
-                modelIndex += appsTree.querySortedIndex(app);
-                appsModel.set(modelIndex, {"app": app.name, "library": lib.displayName, "appObj": app});
-            }
-
-            function addOneApp(lib, app) {
-                var modelIndex = libs.queryUserCount(lib);
-                var appsTree = libs.queryValue(lib);
-                appsTree.insert(app, null);
-                modelIndex += appsTree.querySortedIndex(app);
-                appsModel.insert(modelIndex, {"app": app.name, "library": lib.displayName});
-                libs.setUserCount(lib, appsTree.count());
-                app.nameChanged.connect(function() { setAppName(app); });
-            }
-
-            function addApp(app) {
-                var lib = app.library;
-                addOneApp(lib, app);
-            }
-
-            function removeApp(app) {
-                var lib = app.library;
-                var modelIndex = libs.queryUserCount(lib);
-                var appsTree = libs.queryValue(lib);
-                modelIndex += appsTree.querySortedIndex(app);
-                appsTree.remove(app);
-                appsModel.remove(modelIndex, 1);
-                libs.setUserCount(lib, appsTree.count());
-            }
-
-            function addLibrary(lib) {
-                libs.insert(lib, new RedBlackTree.RedBlackTree());
-                for (var a = 0; a < lib.count(); a++)
-                {
-                    addOneApp(lib, lib.get(a));
-                }
-                lib.appAdd.connect(addApp);
-                lib.appRemove.connect(removeApp);
-            }
-
-            function removeLibrary(lib) {
-                var modelIndex = libs.queryUserCount(lib);
-                var appsTree = libs.queryValue(lib);
-                var numApps = appsTree.count();
-                libs.remove(lib);
-                appsModel.remove(modelIndex, numApps);
-            }
-
-            Component.onCompleted: {
-                for (var l = 0; l < Piping.libraries.count(); l++)
-                {
-                    var lib = Piping.libraries.get(l);
-                    addLibrary(lib);
-                }
-                Piping.libraries.libraryAdd.connect(addLibrary);
-                Piping.libraries.libraryRemove.connect(removeLibrary);
-            }
 
             RowLayout {
                 id: rowLayout1
@@ -181,12 +116,13 @@ ApplicationWindow {
                     sortRole: appsModel.count > 0 ? tableView.getColumn(tableView.sortIndicatorColumn).role : ""
                 }
 
-                ListModel {
+                AppsModel {
                     id: appsModel
+                    libraries: Piping.libraries
                 }
 
                 selection.onSelectionChanged: {
-                    selectedAppPanel.app = (tableView.currentRow >= 0) ? appsModel.get(proxyModel.sourceIndex(tableView.currentRow)).appObj : null;
+                    selectedAppPanel.app = (tableView.currentRow >= 0) ? appsModel.get(proxyModel.sourceIndex(tableView.currentRow)) : null;
                 }
             }
 

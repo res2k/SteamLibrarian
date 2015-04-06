@@ -1,5 +1,7 @@
 qt5_add_resources(FACADE_QRC src/facade.qrc OPTIONS --compress 9 --threshold 0)
 add_library(Facade
+            src/AppsModel.cpp
+            src/AppsModel.hpp
             src/FormatByteAmount.hpp
             src/LibrariesModel.cpp
             src/LibrariesModel.hpp
