@@ -23,6 +23,8 @@ namespace rbt_detail
         value = std::move(other.value);
         return *this;
       }
+      ValueType* ValuePtr() { return &value; }
+      const ValueType* ValuePtr() const { return &value; }
     };
     typedef std::pair<const KeyType&, const ValueType&> iterator_value_type;
     static iterator_value_type MakeValue(const KeyType& key, const Container& container)
@@ -40,6 +42,8 @@ namespace rbt_detail
       Container() {}
       Container(param_type&& value) {}
       Container& operator=(Container&& other) { return *this; }
+      void* ValuePtr() { return this; /* Non-null value */ }
+      const void* ValuePtr() const { return this; /* Non-null value */ }
     };
     typedef const KeyType& iterator_value_type;
     static iterator_value_type MakeValue(const KeyType& key, const Container&)
@@ -172,7 +176,7 @@ private:
 
   size_t queryCount(const T& key, int n) const
   {
-    if (!root) return (size_t)-1;
+    if (!root) return 0;
     /* The "count" is sum of all node counts up until the node itself
     if the tree was traversed depth-first left-to-right.
     Determine this number w/o doing a whole traversal. */
@@ -206,6 +210,21 @@ private:
       }
     }
     return index;
+  }
+
+  void setUserCount(const std::unique_ptr<Node>& node, const T& key, size_t count)
+  {
+    if (!node) return;
+    if (node->key == key)
+    {
+      node->userCount = count;
+    }
+    else
+    {
+      int dir = (node->key < key) ? 1 : 0;
+      setUserCount(node->children[dir], key, count);
+    }
+    updateCount(node);
   }
 public:
   RedBlackTree()
@@ -336,12 +355,24 @@ public:
 
   size_t size() const { return root ? root->counts[0] : 0; }
 
-  size_t querySortedIndex (const T& key) const
+  size_t totalUserCount() const { return root ? root->counts[1] : 0; }
+
+  void setUserCount (const T& key, size_t count)
+  {
+    setUserCount(root, key, count);
+  }
+
+  size_t querySortedIndex(const T& key) const
   {
     /* The "sorted index" is the position a node would have
     if the tree was traversed depth-first left-to-right.
     Determine this number w/o doing a whole traversal. */
     return queryCount(key, 0);
+  }
+
+  size_t queryUserCount (const T&key) const
+  {
+    return queryCount(key, 1);
   }
 
   const T* queryBySortedIndex(size_t index) const
@@ -362,6 +393,42 @@ public:
         // Go right
         node = node->children[1].get();
         index -= (leftCount+1);
+      }
+    }
+    return nullptr;
+  }
+
+  V* queryValue (const T& key)
+  {
+    Node* node = root.get();
+    while (node)
+    {
+      if (node->key == key)
+      {
+        return node->ValuePtr();
+      }
+      else
+      {
+        int dir = (node->key < key) ? 1 : 0;
+        node = node->children[dir].get();
+      }
+    }
+    return nullptr;
+  }
+
+  const V* queryValue(const T& key) const
+  {
+    const Node* node = root.get();
+    while (node)
+    {
+      if (node->key == key)
+      {
+        return node->ValuePtr();
+      }
+      else
+      {
+        int dir = (node->key < key) ? 1 : 0;
+        node = node->children[dir].get();
       }
     }
     return nullptr;
@@ -418,7 +485,7 @@ public:
         return *this;
       }
     }
-    value_type&& operator*() const
+    value_type operator*() const
     {
       const Node* current_node(nodes_stack.top().first);
       return rbt_detail::TypesHelper<T, V>::MakeValue(current_node->key, *current_node);
