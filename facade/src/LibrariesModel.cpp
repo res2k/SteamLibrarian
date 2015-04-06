@@ -90,7 +90,7 @@ namespace facade
   void LibrariesModel::libraryAdded(piping::Library* lib)
   {
     int newIndex = static_cast<int> (m_libs.querySortedIndex(lib));
-    beginInsertRows(QModelIndex(), newIndex, newIndex + 1);
+    beginInsertRows(QModelIndex(), newIndex, newIndex);
     m_libs.insert(std::move (lib));
     endInsertRows();
     emit countChanged();
@@ -99,7 +99,7 @@ namespace facade
   void LibrariesModel::libraryRemoved(piping::Library* lib)
   {
     int index = static_cast<int> (m_libs.querySortedIndex(lib));
-    beginRemoveRows(QModelIndex(), index, index + 1);
+    beginRemoveRows(QModelIndex(), index, index);
     m_libs.remove(std::move(lib));
     endRemoveRows();
     emit countChanged();
