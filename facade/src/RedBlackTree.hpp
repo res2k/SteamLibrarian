@@ -5,11 +5,12 @@
 #define __REDBLACKTREE_HPP__
 
 #include <memory>
+#include <stack>
 
 namespace rbt_detail
 {
-  template<typename ValueType>
-  struct ValueHelper
+  template<typename KeyType, typename ValueType>
+  struct TypesHelper
   {
     typedef ValueType param_type;
     struct Container
@@ -18,10 +19,15 @@ namespace rbt_detail
       Container() {}
       Container(ValueType&& value) : value(value) {}
     };
+    typedef std::pair<const KeyType&, const ValueType&> iterator_value_type;
+    static iterator_value_type MakeValue(const KeyType& key, const Container& container)
+    {
+      return iterator_value_type (key, container.value);
+    }
   };
 
-  template<>
-  struct ValueHelper <void>
+  template<typename KeyType>
+  struct TypesHelper <KeyType, void>
   {
     struct undefined;
     typedef undefined* param_type;
@@ -29,6 +35,11 @@ namespace rbt_detail
       Container() {}
       Container(param_type&& value) {}
     };
+    typedef const KeyType& iterator_value_type;
+    static iterator_value_type MakeValue(const KeyType& key, const Container&)
+    {
+      return key;
+    }
   };
 } // namespace detail
 
@@ -41,8 +52,9 @@ class RedBlackTree
 {
 public:
   typedef T key_type;
+  typedef typename rbt_detail::TypesHelper<T, V>::iterator_value_type value_type;
 private:
-  class Node : public rbt_detail::ValueHelper<V>::Container
+  class Node : public rbt_detail::TypesHelper<T, V>::Container
   {
   public:
     T key;
@@ -58,14 +70,14 @@ private:
       counts[0] = 1;
       counts[1] = userCount;
     }
-    Node(T&& key, typename rbt_detail::ValueHelper<V>::param_type&& value, size_t userCount = 0)
-      : rbt_detail::ValueHelper<V>::Container(value), Node(key, userCount)
+    Node(T&& key, typename rbt_detail::TypesHelper<T, V>::param_type&& value, size_t userCount = 0)
+      : rbt_detail::TypesHelper<T, V>::Container(value), Node(key, userCount)
     {}
 
     void MoveValue(Node& from)
     {
-      static_cast<rbt_detail::ValueHelper<V>::Container&> (*this) =
-        std::move(static_cast<rbt_detail::ValueHelper<V>::Container&> (from));
+      static_cast<rbt_detail::TypesHelper<T, V>::Container&> (*this) =
+        std::move(static_cast<rbt_detail::TypesHelper<T, V>::Container&> (from));
     }
   };
   std::unique_ptr<Node> root;
@@ -193,6 +205,7 @@ public:
   RedBlackTree()
   {
   }
+  RedBlackTree(const RedBlackTree& other) = delete;
 
   void clear()
   {
@@ -206,7 +219,7 @@ public:
     root->color = Node::Black;
   }
 
-  void insert(T&& key, typename rbt_detail::ValueHelper<V>::param_type&& value)
+  void insert(T&& key, typename rbt_detail::TypesHelper<T, V>::param_type&& value)
   {
     std::unique_ptr<Node> n(new Node(std::move(key), std::move(value)));
     root = internalInsert(root, n);
@@ -339,6 +352,66 @@ public:
     }
     return nullptr;
   }
+
+  class const_iterator
+  {
+    std::stack<std::pair<const Node*, int>> nodes_stack;
+    
+    void descend(const Node* node)
+    {
+      if (!node) return;
+      while (node)
+      {
+        nodes_stack.push(std::make_pair(node, 0));
+        node = node->children[0].get();
+      }
+      nodes_stack.top().second = 1;
+    }
+  public:
+    const_iterator() {}
+    const_iterator(const RedBlackTree& tree)
+    {
+      descend(tree.root.get());
+    }
+
+    bool operator!=(const const_iterator& other) const
+    {
+      // Compare positions in stack.
+      return nodes_stack != other.nodes_stack;
+    }
+    const_iterator& operator++()
+    {
+      while (true)
+      {
+        while (!nodes_stack.empty() && (nodes_stack.top().second == 2))
+        {
+          // Node was already visited
+          nodes_stack.pop();
+        }
+        // All nodes visited
+        if (nodes_stack.empty()) return *this;
+        // Top node and it's left subtree were visited, descend right
+        if (nodes_stack.top().second == 1)
+        {
+          nodes_stack.top().second = 2;
+          const Node* right_child(nodes_stack.top().first->children[1].get());
+          if (!right_child) continue;
+          descend(right_child);
+          return *this;
+        }
+        // Visiting top node
+        nodes_stack.top().second = 1;
+        return *this;
+      }
+    }
+    value_type&& operator*() const
+    {
+      const Node* current_node(nodes_stack.top().first);
+      return rbt_detail::TypesHelper<T, V>::MakeValue(current_node->key, *current_node);
+    }
+  };
+  const_iterator begin() const { return const_iterator(*this); }
+  const_iterator end() const { return const_iterator(); }
 };
 
 #endif // __REDBLACKTREE_HPP__

@@ -193,5 +193,34 @@ public:
      * But takes a *long* time, thus commented out... */
     //TestTrees<tree_type, 7>::Test();
   }
+
+  void testIteratorEmpty()
+  {
+    tree_type tree;
+    int expected = 0;
+    for (int v : tree)
+    {
+      expected++;
+    }
+    TS_ASSERT_EQUALS(expected, 0);
+  }
+
+  void testIterator()
+  {
+    const int insert_values[] = { 6, 3, 5, 1, 2, 0, 4 };
+
+    tree_type tree;
+    for (int v : insert_values)
+    {
+      tree.insert(std::move(v));
+    }
+
+    int expected = 0;
+    for (int v : tree)
+    {
+      TS_ASSERT_EQUALS(v, expected);
+      expected++;
+    }
+  }
 };
 
