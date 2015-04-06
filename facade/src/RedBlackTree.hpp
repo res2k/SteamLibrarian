@@ -18,6 +18,11 @@ namespace rbt_detail
       ValueType value;
       Container() {}
       Container(ValueType&& value) : value(value) {}
+      Container& operator=(Container&& other)
+      {
+        value = std::move(other.value);
+        return *this;
+      }
     };
     typedef std::pair<const KeyType&, const ValueType&> iterator_value_type;
     static iterator_value_type MakeValue(const KeyType& key, const Container& container)
@@ -34,6 +39,7 @@ namespace rbt_detail
     struct Container {
       Container() {}
       Container(param_type&& value) {}
+      Container& operator=(Container&& other) { return *this; }
     };
     typedef const KeyType& iterator_value_type;
     static iterator_value_type MakeValue(const KeyType& key, const Container&)
@@ -206,6 +212,14 @@ public:
   {
   }
   RedBlackTree(const RedBlackTree& other) = delete;
+  RedBlackTree(RedBlackTree&& other) : root(std::move(other.root)) {}
+
+  RedBlackTree& operator=(const RedBlackTree& other) = delete;
+  RedBlackTree& operator=(RedBlackTree&& other)
+  {
+    root = std::move(other.root);
+    return *this;
+  }
 
   void clear()
   {
