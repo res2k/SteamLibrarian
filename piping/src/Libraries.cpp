@@ -141,7 +141,7 @@ namespace piping
       {
         emit libraryRemove(lib);
         currentLibsIt = m_libraries.erase(currentLibsIt);
-        delete lib;
+        lib->deleteLater();
       }
       else
       {
