@@ -95,7 +95,18 @@ ApplicationWindow {
                     role: "app"
                     movable: false
                     resizable: true
-                    width: tableView.viewport.width / 3
+                    width: tableView.viewport.width - (libColumn.width + sizeOnDiskColumn.width)
+                }
+
+                TableViewColumn {
+                    id: sizeOnDiskColumn
+                    title: "Size on disk"
+                    role: "sizeOnDiskStr"
+                    movable: false
+                    resizable: true
+                    width: 100
+
+                    property string sortRole: "sizeOnDisk"
                 }
 
                 TableViewColumn {
@@ -104,7 +115,7 @@ ApplicationWindow {
                     role: "library"
                     movable: false
                     resizable: true
-                    width: tableView.viewport.width - appColumn.width
+                    width: tableView.viewport.width / 3
                 }
 
                 model: SortFilterProxyModel {
@@ -113,7 +124,18 @@ ApplicationWindow {
 
                     sortOrder: tableView.sortIndicatorOrder
                     sortCaseSensitivity: Qt.CaseInsensitive
-                    sortRole: appsModel.count > 0 ? tableView.getColumn(tableView.sortIndicatorColumn).role : ""
+                    sortRole: {
+                        if (appsModel.count > 0)
+                        {
+                            var col = tableView.getColumn(tableView.sortIndicatorColumn);
+                            if (col.sortRole !== undefined) return col.sortRole;
+                            return col.role;
+                        }
+                        else
+                        {
+                            return "";
+                        }
+                    }
                 }
 
                 AppsModel {

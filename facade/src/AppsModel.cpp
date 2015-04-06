@@ -3,6 +3,8 @@
 #include "piping/App.hpp"
 #include "piping/Library.hpp"
 
+#include "FormatByteAmount.hpp"
+
 namespace facade
 {
   AppsModel::AppsModel(QObject* parent) : QAbstractListModel(parent)
@@ -66,6 +68,8 @@ namespace facade
     QHash<int, QByteArray> roles(QAbstractListModel::roleNames());
     roles[AppNameRole] = "app";
     roles[LibRole] = "library";
+    roles[SizeOnDiskRole] = "sizeOnDisk";
+    roles[SizeOnDiskStrRole] = "sizeOnDiskStr";
     return roles;
   }
 
@@ -86,6 +90,10 @@ namespace facade
         return app->name();
       case LibRole:
         return app->library()->displayName();
+      case SizeOnDiskRole:
+        return app->sizeOnDisk();
+      case SizeOnDiskStrRole:
+        return FormatByteAmount(app->sizeOnDisk(), roundUp);
       default:
         break;
       }

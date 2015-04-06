@@ -33,7 +33,9 @@ namespace facade
     enum LibraryRoles
     {
       AppNameRole = Qt::UserRole + 1,
-      LibRole
+      LibRole,
+      SizeOnDiskRole,
+      SizeOnDiskStrRole
     };
     AppsModel(QObject* parent = nullptr);
 
