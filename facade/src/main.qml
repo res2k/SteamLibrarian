@@ -91,7 +91,7 @@ ApplicationWindow {
 
                 TableViewColumn {
                     id: appColumn
-                    title: "App"
+                    title: "Application"
                     role: "app"
                     movable: false
                     resizable: true
@@ -197,6 +197,7 @@ ApplicationWindow {
                             Layout.columnSpan: 3
                             Layout.fillWidth: true
                             text: qsTr("Select a game.")
+                            elide: Text.ElideRight
 
                             property real largeFontSize
 
