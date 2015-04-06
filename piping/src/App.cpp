@@ -8,6 +8,8 @@
 
 #include "vdf.hpp"
 
+#include <boost/lexical_cast/try_lexical_convert.hpp>
+
 namespace piping
 {
   App::App(Library* lib, const QString& installDir) : QObject(lib), m_installDir(installDir) {}
@@ -37,6 +39,7 @@ namespace piping
     auto insertPos = std::lower_bound(m_acfData.begin(), m_acfData.end(), newPair, &ACFAppIDLower);
     m_acfData.insert(insertPos, std::move(newPair));
     emit nameChanged();
+    emit sizeOnDiskChanged();
   }
 
   void App::RemoveACF(const QString& acfName)
@@ -46,6 +49,7 @@ namespace piping
     {
       m_acfData.erase(acfIt);
       emit nameChanged();
+      emit sizeOnDiskChanged();
     }
   }
 
@@ -83,6 +87,22 @@ namespace piping
       }
     }
     return assembledName.isEmpty() ? QStringLiteral("???") : assembledName;
+  }
+
+  quint64 App::sizeOnDisk() const
+  {
+    quint64 size = 0;
+    for (const acf_name_data_pair& acfPair : m_acfData)
+    {
+      boost::optional<vdf::vdf_ptree> name_child(acfPair.second->get_child_optional(L"AppState.SizeOnDisk"));
+      if (name_child)
+      {
+        quint64 acf_size;
+        if (boost::conversion::try_lexical_convert(name_child->data(), acf_size))
+          size += acf_size;
+      }
+    }
+    return size;
   }
 
   QObject* App::queryMover(piping::Library* destination)

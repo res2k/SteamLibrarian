@@ -43,6 +43,8 @@ namespace piping
     const QString& installDir() const;
     /// Get app name
     QString name() const;
+    /// Get disk space used by app
+    quint64 sizeOnDisk() const;
 
     /// Query an object to perform a move to another library.
     Q_INVOKABLE QObject* queryMover(piping::Library* destination);
@@ -55,8 +57,10 @@ namespace piping
 
     Q_PROPERTY(piping::Library* library READ library CONSTANT)
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(quint64 sizeOnDisk READ sizeOnDisk NOTIFY sizeOnDiskChanged)
   signals:
     void nameChanged();
+    void sizeOnDiskChanged();
   };
 } // namespace piping
 
