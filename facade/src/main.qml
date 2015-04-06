@@ -118,6 +118,32 @@ ApplicationWindow {
                     width: tableView.viewport.width / 3
                 }
 
+                function libraryTint(libStr, baseColor) {
+                    var n = 0;
+                    for (var x = 0; x < libStr.length; x++)
+                    {
+                        var c = libStr.charCodeAt(x);
+                        n += c;
+                    }
+                    // Avoid reddish colors
+                    var tintColor = Qt.hsla(((n % 10)+1) / 12.0, 1.0, 0.5, 0.5);
+                    return Qt.tint(baseColor, tintColor);
+                }
+
+                itemDelegate: Item {
+                    Label {
+                        anchors.fill: parent
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.leftMargin: 8
+                        color: {
+                            return (tableView.getColumn(styleData.column).role === "library"  && !styleData.selected)
+                               ? tableView.libraryTint(styleData.value, styleData.textColor) : styleData.textColor;
+                        }
+                        elide: styleData.elideMode
+                        text: styleData.value
+                    }
+                }
+
                 model: SortFilterProxyModel {
                     id: proxyModel
                     source: appsModel.count > 0 ? appsModel : null
