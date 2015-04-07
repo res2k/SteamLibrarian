@@ -40,7 +40,12 @@ namespace facade
     }
     double fmt_val;
     int fmt_digits;
-    if (size >= 100)
+    if (unit == 0)
+    {
+      fmt_val = size;
+      fmt_digits = 0;
+    }
+    else if (size >= 100)
     {
       fmt_val = size;
       if ((rounding == roundUp) && (remainder > 0)) fmt_val += 1;
