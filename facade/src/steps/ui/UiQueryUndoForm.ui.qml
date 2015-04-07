@@ -12,7 +12,8 @@ Item {
 
     ColumnLayout {
         id: columnLayout
-        anchors.left: parent.left
+        anchors.leftMargin: 8
+        anchors.left: image1.right
         anchors.right: parent.right
         anchors.top: parent.top
 
@@ -53,6 +54,19 @@ Item {
                 text: qsTr("Cancel")
             }
         }
+    }
+
+    Image {
+        id: image1
+        width: 32
+        height: 32
+        sourceSize.height: 32
+        sourceSize.width: 32
+        anchors.left: parent.left
+        anchors.leftMargin: 8
+        anchors.top: parent.top
+        fillMode: Image.Stretch
+        source: "image://standard/MessageBoxWarning"
     }
 }
 

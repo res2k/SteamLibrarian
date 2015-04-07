@@ -11,8 +11,10 @@ Item {
 
     ColumnLayout {
         id: columnLayout
-        anchors.left: parent.left
         anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.left: busy.right
+        anchors.leftMargin: 8
         anchors.top: parent.top
 
         Label {
@@ -29,5 +31,7 @@ Item {
         }
 
     }
+
+    BusyIndicator { id: busy; width: 16; height: 16; anchors.top: parent.top; anchors.topMargin: 0; running: true }
 }
 
