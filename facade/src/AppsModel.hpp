@@ -64,7 +64,7 @@ namespace facade
     void libraryRemoved(piping::Library* lib);
     void appAdded(piping::App* app);
     void appRemoved(piping::App* app);
-    void appNameChanged();
+    void appDataChanged();
   };
 } // namespace facade
 

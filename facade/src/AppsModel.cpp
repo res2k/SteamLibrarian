@@ -161,7 +161,7 @@ namespace facade
     endInsertRows();
     emit countChanged();
 
-    connect(app, &piping::App::nameChanged, this, &AppsModel::appNameChanged);
+    connect(app, &piping::App::dataChanged, this, &AppsModel::appDataChanged);
   }
 
   void AppsModel::appRemoved(piping::App* app)
@@ -178,7 +178,7 @@ namespace facade
     emit countChanged();
   }
 
-  void AppsModel::appNameChanged()
+  void AppsModel::appDataChanged()
   {
     piping::App* app = qobject_cast<piping::App*> (sender());
     if (!app) return;

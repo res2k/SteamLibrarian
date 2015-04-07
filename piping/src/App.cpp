@@ -38,8 +38,7 @@ namespace piping
     acf_name_data_pair newPair = std::make_pair(acfName, std::move(tree_ptr));
     auto insertPos = std::lower_bound(m_acfData.begin(), m_acfData.end(), newPair, &ACFAppIDLower);
     m_acfData.insert(insertPos, std::move(newPair));
-    emit nameChanged();
-    emit sizeOnDiskChanged();
+    emit dataChanged();
   }
 
   void App::RemoveACF(const QString& acfName)
@@ -48,8 +47,7 @@ namespace piping
     if (acfIt != m_acfData.end())
     {
       m_acfData.erase(acfIt);
-      emit nameChanged();
-      emit sizeOnDiskChanged();
+      emit dataChanged();
     }
   }
 

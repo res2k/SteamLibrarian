@@ -56,11 +56,11 @@ namespace piping
     QStringList GetAppFiles() const;
 
     Q_PROPERTY(piping::Library* library READ library CONSTANT)
-    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
-    Q_PROPERTY(quint64 sizeOnDisk READ sizeOnDisk NOTIFY sizeOnDiskChanged)
+    Q_PROPERTY(QString name READ name NOTIFY dataChanged)
+    Q_PROPERTY(quint64 sizeOnDisk READ sizeOnDisk NOTIFY dataChanged)
   signals:
-    void nameChanged();
-    void sizeOnDiskChanged();
+    /// Some application data changed
+    void dataChanged();
   };
 } // namespace piping
 
