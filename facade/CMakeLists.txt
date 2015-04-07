@@ -9,6 +9,8 @@ add_library(Facade
             src/RegisterTypes.cpp
             src/sortfilterproxymodel.cpp
             src/sortfilterproxymodel.h
+            src/StandardImageProvider.cpp
+            src/StandardImageProvider.hpp
             src/Start.cpp
             include/facade/RegisterTypes.hpp
             include/facade/Start.hpp
@@ -18,7 +20,7 @@ add_library(Facade
            )
 target_include_directories(Facade PUBLIC include)
 target_link_libraries(Facade PRIVATE Piping)
-target_link_libraries(Facade PUBLIC Qt5::Core Qt5::Qml)
+target_link_libraries(Facade PUBLIC Qt5::Core Qt5::Qml Qt5::Quick)
 
 if(CXXTEST_FOUND)
     CXXTEST_ADD_TEST(test_Facade test_Facade.cpp
