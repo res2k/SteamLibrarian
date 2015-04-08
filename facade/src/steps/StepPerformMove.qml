@@ -38,7 +38,7 @@ Item {
                 var undoMover = mover.getUndoMover();
                 if (undoMover === null)
                 {
-                    stepCompleted(false, undefined);
+                    stepCompleted(false, message);
                     return;
                 }
                 steps.addStep(Qt.createComponent("StepQueryUndo.qml"), {"message": message, "undoMover": undoMover});
