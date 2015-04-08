@@ -77,6 +77,7 @@ namespace piping
 
   QObject* AppMover::getUndoMover()
   {
+    if (m_undoData.empty()) return nullptr;
     return new AppMover(m_undoData);
   }
 
