@@ -12,7 +12,7 @@
 namespace piping
 {
   AppMover::AppMover(QList<QPair<QString, QString>> files, QObject* parent)
-    : QObject(parent), m_files(files), m_recurse(false)
+    : QObject(parent), m_files(files), m_app(nullptr), m_destLib(false), m_recurse(false)
   {
   }
 
@@ -59,7 +59,7 @@ namespace piping
         QMetaObject::invokeMethod(worker, "Move", Q_ARG(QString, srcPath), Q_ARG(QString, destPath));
       }
     }
-    else
+    else if (m_app)
     {
       typedef QPair<QString, QString> QString_pair;
       Q_FOREACH(const QString_pair& files, m_files)

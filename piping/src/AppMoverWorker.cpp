@@ -37,6 +37,13 @@ namespace piping
 
   void AppMoverWorker::Perform()
   {
+    if (m_moveFiles.empty())
+    {
+      // Nothing to do...
+      emit finished();
+      return;
+    }
+
     HRESULT hr = CoInitialize(nullptr);
     if (!SUCCEEDED(hr)) { SignalResult(hr); return; }
 
