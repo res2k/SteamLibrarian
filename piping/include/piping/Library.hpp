@@ -66,11 +66,13 @@ namespace piping
   protected:
     /// The library folder contents changed
     void LibraryFolderChanged(const QString& path);
+    /// An .acf file changed
+    void ACFFileChanged(const QString& path);
     /// Look for .acf files
     void RescanForACFs();
 
-    /// Scan a new .acf
-    void NewACF(const QString& acfName);
+    /// Scan a new or changed .acf
+    void ParseACF(const QString& acfName);
     /// Remove an .acf + associated app object
     void RemoveACF(const QString& acfName);
 

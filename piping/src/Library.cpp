@@ -21,6 +21,7 @@ namespace piping
     // Set up watcher for lib dir
     m_fsw = new QFileSystemWatcher(this);
     connect(m_fsw, &QFileSystemWatcher::directoryChanged, this, &Library::LibraryFolderChanged);
+    connect(m_fsw, &QFileSystemWatcher::fileChanged, this, &Library::ACFFileChanged);
     m_fsw->addPath(m_steamAppsPath);
 
     // Scan m_steamAppsPath for .acf files
@@ -57,6 +58,13 @@ namespace piping
     RescanForACFs();
   }
 
+  void Library::ACFFileChanged(const QString& path)
+  {
+    QFileInfo fi(path);
+    QString acfName = fi.fileName();
+    ParseACF(acfName);
+  }
+
   void Library::RescanForACFs()
   {
     QDir steamappsDir(m_steamAppsPath);
@@ -72,7 +80,7 @@ namespace piping
       if (!m_acfAppMap.contains(acfBase))
       {
         // New .acf
-        NewACF(acfBase);
+        ParseACF(acfBase);
       }
       seenACFs.insert(acfBase);
     }
@@ -87,7 +95,7 @@ namespace piping
     }
   }
 
-  void Library::NewACF(const QString& acfName)
+  void Library::ParseACF(const QString& acfName)
   {
     QFutureWatcher<acf_parse_result>* watcher =
       new QFutureWatcher<acf_parse_result>(this);
@@ -102,6 +110,8 @@ namespace piping
     App* app = m_acfAppMap.value(acfName, nullptr);
     if (!app) return;
 
+    QString acf_full_path = m_steamAppsPath % QDir::separator() % acfName;
+    m_fsw->removePath(acf_full_path);
     app->RemoveACF(acfName);
     if (!app->HaveACFs())
     {
@@ -151,6 +161,15 @@ namespace piping
       if (install_dir_child)
       {
         QString installDir(QString::fromStdWString(install_dir_child->data()));
+        if (m_acfAppMap.contains(vdf.second))
+        {
+          App* prevApp = m_acfAppMap.value(vdf.second);
+          if (prevApp->installDir() != installDir)
+          {
+            // The installation directory changed, need to remove .acf from app
+            RemoveACF(vdf.second);
+          }
+        }
         App* app = m_dirAppMap.value(installDir, nullptr);
         if (!app)
         {
@@ -163,6 +182,12 @@ namespace piping
         }
         app->AddACF(vdf.second, std::move(*(vdf.first)));
         m_acfAppMap[vdf.second] = app;
+        QString acf_full_path = m_steamAppsPath % QDir::separator() % vdf.second;
+        m_fsw->addPath(acf_full_path);
+      }
+      else
+      {
+        RemoveACF(vdf.second);
       }
     }
   }

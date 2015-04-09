@@ -34,6 +34,14 @@ namespace piping
 
   void App::AddACF(const QString& acfName, vdf::vdf_ptree&& acfData)
   {
+    {
+      auto acfIt = std::find_if(m_acfData.begin(), m_acfData.end(), std::bind(ACFNameCompare, std::placeholders::_1, acfName));
+      if (acfIt != m_acfData.end())
+      {
+        m_acfData.erase(acfIt);
+      }
+    }
+
     std::unique_ptr<vdf::vdf_ptree> tree_ptr(new vdf::vdf_ptree(acfData));
     acf_name_data_pair newPair = std::make_pair(acfName, std::move(tree_ptr));
     auto insertPos = std::lower_bound(m_acfData.begin(), m_acfData.end(), newPair, &ACFAppIDLower);

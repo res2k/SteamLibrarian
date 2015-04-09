@@ -30,7 +30,7 @@ namespace piping
     App(Library* lib, const QString& installDir);
     ~App();
 
-    /// Add .acf data
+    /// Set .acf data
     void AddACF(const QString& acfName, vdf::vdf_ptree&& acfData);
     /// Remove some .acf data
     void RemoveACF(const QString& acfName);
