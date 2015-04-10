@@ -137,10 +137,14 @@ namespace piping
       installdirs.insert(QString::fromStdWString(installdir_child->data()));
     }
 
+    QString steamappsPath(library()->path() % QDir::separator() % QStringLiteral("steamapps"));
     QStringList files;
     Q_FOREACH(const QString& installdir, installdirs)
     {
-      files.append(QStringLiteral("common") % QDir::separator() % installdir);
+      QString dir_rel(QStringLiteral("common") % QDir::separator() % installdir);
+      /* Directory might not exist if e.g. preloading. */
+      if (!QFileInfo::exists(steamappsPath % QDir::separator() % dir_rel)) continue;
+      files.append(dir_rel);
     }
     for (const auto& acfPair : m_acfData)
     {
