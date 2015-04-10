@@ -151,7 +151,22 @@ namespace piping
       // Add .acf files
       files.append(acfPair.first);
 
-      // TODO: Add files from downloading/
+      // Add files from downloading/
+      QString downloadingAppRel(QStringLiteral("downloading") % QDir::separator() % acfPair.second->m_appid);
+      QString downloadingApp(steamappsPath % QDir::separator() % downloadingAppRel);
+      if (QFileInfo::exists(downloadingApp))
+      {
+        files.append(downloadingAppRel);
+      }
+
+      QString downloadingPath(steamappsPath % QDir::separator() % QStringLiteral("downloading"));
+      QDir downloadingDir(downloadingPath);
+      downloadingDir.setNameFilters(QStringList(QStringLiteral("state_") % acfPair.second->m_appid % QStringLiteral("_*.patch")));
+      QFileInfoList stateEntries = downloadingDir.entryInfoList();
+      for (const auto& stateEntry : stateEntries)
+      {
+        files.append(QStringLiteral("downloading") % QDir::separator() % stateEntry.fileName());
+      }
     }
 
     return std::move(files);
