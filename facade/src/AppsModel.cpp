@@ -91,9 +91,15 @@ namespace facade
       case LibRole:
         return app->library()->displayName();
       case SizeOnDiskRole:
-        return app->sizeOnDisk();
+        return app->sizeOnDisk() + app->downloadingSize();
       case SizeOnDiskStrRole:
-        return FormatByteAmount(app->sizeOnDisk(), roundUp);
+        {
+          QString sizeStr = FormatByteAmount(app->sizeOnDisk(), roundUp);
+          quint64 downloadSize = app->downloadingSize();
+          if (downloadSize > 0)
+            sizeStr = QStringLiteral("%1 (+ %2)").arg(sizeStr, FormatByteAmount(downloadSize, roundUp));
+          return sizeStr;
+        }
       default:
         break;
       }
