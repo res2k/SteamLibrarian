@@ -3,6 +3,7 @@
 #include "piping/AppMover.hpp"
 #include "piping/Library.hpp"
 
+#include <QtConcurrent>
 #include <QDir>
 #include <QStringBuilder>
 
@@ -10,29 +11,38 @@
 
 #include <boost/lexical_cast/try_lexical_convert.hpp>
 
+#include <queue>
+
 namespace piping
 {
   struct App::ACFData
   {
+    QString m_appid;
     vdf::vdf_ptree m_tree;
+    QFuture<void> m_downloadScanFuture;
+    boost::atomic<quint64> m_downloadSize;
 
-    ACFData(vdf::vdf_ptree&& tree) : m_tree(std::move(tree)) {}
-    ACFData(ACFData&& other) : m_tree(std::move(other.m_tree)) {}
+    ACFData(vdf::vdf_ptree&& tree) : m_tree(std::move(tree)), m_downloadSize(0) {}
+    ACFData(ACFData&& other) : m_tree(std::move(other.m_tree)), m_downloadSize(0)  {}
     ACFData(const ACFData&) = delete;
+    ~ACFData()
+    {
+      m_downloadScanFuture.waitForFinished();
+    }
   };
 
-  App::App(Library* lib, const QString& installDir) : QObject(lib), m_installDir(installDir) {}
+  App::App(Library* lib, const QString& installDir)
+    : QObject(lib), m_installDir(installDir), m_dataChangePending(false)
+  {}
 
   App::~App()
   {}
 
   bool App::ACFAppIDLower(const acf_name_data_pair& a, const acf_name_data_pair& b)
   {
-    boost::optional<vdf::vdf_ptree> id_child_1(a.second->m_tree.get_child_optional(L"AppState.appid"));
-    boost::optional<vdf::vdf_ptree> id_child_2(b.second->m_tree.get_child_optional(L"AppState.appid"));
     long id_1 = 0, id_2 = 0;
-    if (id_child_1) id_1 = QString::fromStdWString(id_child_1->data()).toLong();
-    if (id_child_2) id_2 = QString::fromStdWString(id_child_2->data()).toLong();
+    id_1 = a.second->m_appid.toLong();
+    id_2 = b.second->m_appid.toLong();
     return id_1 < id_2;
   }
 
@@ -51,11 +61,35 @@ namespace piping
       }
     }
 
-    std::unique_ptr<ACFData> data_ptr(new ACFData(std::move(acfData)));
-    acf_name_data_pair newPair = std::make_pair(acfName, std::move(data_ptr));
-    auto insertPos = std::lower_bound(m_acfData.begin(), m_acfData.end(), newPair, &ACFAppIDLower);
-    m_acfData.insert(insertPos, std::move(newPair));
+    acf_data_vec::iterator inserted;
+    {
+      std::unique_ptr<ACFData> data_ptr(new ACFData(std::move(acfData)));
+      {
+        boost::optional<vdf::vdf_ptree> id_child(data_ptr->m_tree.get_child_optional(L"AppState.appid"));
+        if (id_child)
+          data_ptr->m_appid = QString::fromStdWString(id_child->data());
+      }
+      acf_name_data_pair newPair = std::make_pair(acfName, std::move(data_ptr));
+      auto insertPos = std::lower_bound(m_acfData.begin(), m_acfData.end(), newPair, &ACFAppIDLower);
+      inserted = m_acfData.insert(insertPos, std::move(newPair));
+    }
     emit dataChanged();
+
+    // Check for 'downloading' files
+    if (!inserted->second->m_appid.isEmpty())
+    {
+      // TODO: These may very well change while Steam is running -> need to watch FS
+      QStringList downloadFiles;
+
+      QString steamappsPath(library()->path() % QDir::separator() % QStringLiteral("steamapps"));
+      QString downloadingAppRel(QStringLiteral("downloading") % QDir::separator() % inserted->second->m_appid);
+      QString downloadingApp(steamappsPath % QDir::separator() % downloadingAppRel);
+      if (QFileInfo::exists(downloadingApp))
+      {
+        inserted->second->m_downloadScanFuture =
+          QtConcurrent::run(this, &App::ScanDownloadFiles, downloadingApp, inserted->second.get());
+      }
+    }
   }
 
   void App::RemoveACF(const QString& acfName)
@@ -120,6 +154,16 @@ namespace piping
     return size;
   }
 
+  quint64 App::downloadingSize() const
+  {
+    quint64 size = 0;
+    for (const acf_name_data_pair& acfPair : m_acfData)
+    {
+      size += acfPair.second->m_downloadSize.load(boost::memory_order_acquire);
+    }
+    return size;
+  }
+
   QObject* App::queryMover(piping::Library* destination)
   {
     return new AppMover(this, destination);
@@ -170,5 +214,53 @@ namespace piping
     }
 
     return std::move(files);
+  }
+
+  void App::ScanDownloadFiles(const QString& downloadingRoot, ACFData* acfData)
+  {
+    acfData->m_downloadSize.store(0, boost::memory_order_relaxed);
+
+    std::queue<QString> scanQueue;
+    scanQueue.push(downloadingRoot);
+    while (!scanQueue.empty())
+    {
+      QString entry(scanQueue.front());
+      scanQueue.pop();
+      QFileInfo fi(entry);
+      if (fi.isDir())
+      {
+        QDir entryDir(entry);
+        QFileInfoList entries = entryDir.entryInfoList();
+        for (const auto& entry : entries)
+        {
+          if ((entry.fileName() == QStringLiteral("."))
+            || (entry.fileName() == QStringLiteral("..")))
+          {
+            continue;
+          }
+          scanQueue.push(entry.absoluteFilePath());
+        }
+      }
+      else
+      {
+        acfData->m_downloadSize.fetch_add(fi.size(), boost::memory_order_acq_rel);
+        CoalesceDataChanged();
+      }
+    }
+  }
+
+  void App::CoalesceDataChanged()
+  {
+    if (!m_dataChangePending.load(boost::memory_order_acquire))
+    {
+      m_dataChangePending.store(true, boost::memory_order_release);
+      QMetaObject::invokeMethod(this, "TriggerDataChanged", Qt::QueuedConnection);
+    }
+  }
+
+  void App::TriggerDataChanged()
+  {
+    emit dataChanged();
+    m_dataChangePending.store(false, boost::memory_order_release);
   }
 } // namespace piping

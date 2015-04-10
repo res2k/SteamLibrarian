@@ -8,6 +8,8 @@
 
 #include "vdf_fwd.hpp"
 
+#include <boost/atomic.hpp>
+
 namespace piping
 {
   class Library;
@@ -21,8 +23,9 @@ namespace piping
     QString m_installDir;
     struct ACFData;
     typedef std::pair<QString, std::unique_ptr<ACFData>> acf_name_data_pair;
+    typedef std::vector<acf_name_data_pair> acf_data_vec;
     /// .acf data
-    std::vector<acf_name_data_pair> m_acfData;
+    acf_data_vec m_acfData;
     /// Comparison function for ACF data pairs
     static bool ACFAppIDLower(const acf_name_data_pair& a, const acf_name_data_pair& b);
     /// Comparison function for ACF data pair
@@ -46,6 +49,8 @@ namespace piping
     QString name() const;
     /// Get disk space used by app
     quint64 sizeOnDisk() const;
+    /// Get disk space used by 'downloading' files
+    quint64 downloadingSize() const;
 
     /// Query an object to perform a move to another library.
     Q_INVOKABLE QObject* queryMover(piping::Library* destination);
@@ -59,6 +64,16 @@ namespace piping
     Q_PROPERTY(piping::Library* library READ library CONSTANT)
     Q_PROPERTY(QString name READ name NOTIFY dataChanged)
     Q_PROPERTY(quint64 sizeOnDisk READ sizeOnDisk NOTIFY dataChanged)
+  protected:
+    /// Worker function to scan a download dir
+    void ScanDownloadFiles(const QString& downloadingRoot, ACFData* acfData);
+    /// Trigger a 'dataChanged' signal on the main thread
+    void CoalesceDataChanged();
+
+    /// Whether a 'dataChanged' trigger is pending
+    boost::atomic<bool> m_dataChangePending;
+    /// Actually trigger 'dataChanged'
+    Q_INVOKABLE void TriggerDataChanged();
   signals:
     /// Some application data changed
     void dataChanged();
