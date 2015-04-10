@@ -19,7 +19,8 @@ namespace piping
   private:
     /// App install dir name
     QString m_installDir;
-    typedef std::pair<QString, std::unique_ptr<vdf::vdf_ptree>> acf_name_data_pair;
+    struct ACFData;
+    typedef std::pair<QString, std::unique_ptr<ACFData>> acf_name_data_pair;
     /// .acf data
     std::vector<acf_name_data_pair> m_acfData;
     /// Comparison function for ACF data pairs

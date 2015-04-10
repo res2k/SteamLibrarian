@@ -12,6 +12,15 @@
 
 namespace piping
 {
+  struct App::ACFData
+  {
+    vdf::vdf_ptree m_tree;
+
+    ACFData(vdf::vdf_ptree&& tree) : m_tree(std::move(tree)) {}
+    ACFData(ACFData&& other) : m_tree(std::move(other.m_tree)) {}
+    ACFData(const ACFData&) = delete;
+  };
+
   App::App(Library* lib, const QString& installDir) : QObject(lib), m_installDir(installDir) {}
 
   App::~App()
@@ -19,8 +28,8 @@ namespace piping
 
   bool App::ACFAppIDLower(const acf_name_data_pair& a, const acf_name_data_pair& b)
   {
-    boost::optional<vdf::vdf_ptree> id_child_1(a.second->get_child_optional(L"AppState.appid"));
-    boost::optional<vdf::vdf_ptree> id_child_2(b.second->get_child_optional(L"AppState.appid"));
+    boost::optional<vdf::vdf_ptree> id_child_1(a.second->m_tree.get_child_optional(L"AppState.appid"));
+    boost::optional<vdf::vdf_ptree> id_child_2(b.second->m_tree.get_child_optional(L"AppState.appid"));
     long id_1 = 0, id_2 = 0;
     if (id_child_1) id_1 = QString::fromStdWString(id_child_1->data()).toLong();
     if (id_child_2) id_2 = QString::fromStdWString(id_child_2->data()).toLong();
@@ -42,8 +51,8 @@ namespace piping
       }
     }
 
-    std::unique_ptr<vdf::vdf_ptree> tree_ptr(new vdf::vdf_ptree(acfData));
-    acf_name_data_pair newPair = std::make_pair(acfName, std::move(tree_ptr));
+    std::unique_ptr<ACFData> data_ptr(new ACFData(std::move(acfData)));
+    acf_name_data_pair newPair = std::make_pair(acfName, std::move(data_ptr));
     auto insertPos = std::lower_bound(m_acfData.begin(), m_acfData.end(), newPair, &ACFAppIDLower);
     m_acfData.insert(insertPos, std::move(newPair));
     emit dataChanged();
@@ -82,7 +91,7 @@ namespace piping
       for(const acf_name_data_pair& acfPair : m_acfData)
       {
         QString partStr;
-        boost::optional<vdf::vdf_ptree> name_child(acfPair.second->get_child_optional(L"AppState.name"));
+        boost::optional<vdf::vdf_ptree> name_child(acfPair.second->m_tree.get_child_optional(L"AppState.name"));
         if (name_child)
           partStr = QString::fromStdWString(name_child->data());
         else
@@ -100,7 +109,7 @@ namespace piping
     quint64 size = 0;
     for (const acf_name_data_pair& acfPair : m_acfData)
     {
-      boost::optional<vdf::vdf_ptree> name_child(acfPair.second->get_child_optional(L"AppState.SizeOnDisk"));
+      boost::optional<vdf::vdf_ptree> name_child(acfPair.second->m_tree.get_child_optional(L"AppState.SizeOnDisk"));
       if (name_child)
       {
         quint64 acf_size;
@@ -123,7 +132,7 @@ namespace piping
     for (const auto& acfPair : m_acfData)
     {
       // Add data files
-      boost::optional<vdf::vdf_ptree> installdir_child(acfPair.second->get_child_optional(L"AppState.installdir"));
+      boost::optional<vdf::vdf_ptree> installdir_child(acfPair.second->m_tree.get_child_optional(L"AppState.installdir"));
       if (!installdir_child) continue;
       installdirs.insert(QString::fromStdWString(installdir_child->data()));
     }
