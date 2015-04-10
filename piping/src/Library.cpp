@@ -62,7 +62,11 @@ namespace piping
   {
     QFileInfo fi(path);
     QString acfName = fi.fileName();
-    ParseACF(acfName);
+    if (QFileInfo::exists(path))
+    {
+      ParseACF(acfName);
+    }
+    // 'Removed' case should be caught by dir scan
   }
 
   void Library::RescanForACFs()
