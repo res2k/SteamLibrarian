@@ -13,6 +13,7 @@ Item {
     property alias gameLabel: gameLabel
     property alias libCombo: libCombo
     property alias moveButton: moveButton
+    property alias sizeLabel: sizeLabelActual
 
     Rectangle {
         id: rectangle1
@@ -45,6 +46,19 @@ Item {
             }
 
             Label {
+                id: sizeLabel
+                visible: false
+                text: qsTr("Size:")
+            }
+
+            Label {
+                id: sizeLabelActual
+                Layout.columnSpan: 2
+                visible: false
+                text: qsTr("")
+            }
+
+            Label {
                 id: libLabel
                 visible: false
                 text: qsTr("Library:")
@@ -72,6 +86,8 @@ Item {
             name: "GAME_SELECTED"
             when: selectedAppPanel.app != null
             PropertyChanges { target: gameLabel; text: selectedAppPanel.app.name; font.pointSize: gameLabel.largeFontSize }
+            PropertyChanges { target: sizeLabel; visible: true }
+            PropertyChanges { target: sizeLabelActual; visible: true }
             PropertyChanges { target: libLabel; visible: true }
             PropertyChanges { target: libCombo; visible: true }
             PropertyChanges { target: moveButton; visible: true }

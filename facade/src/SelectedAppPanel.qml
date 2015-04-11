@@ -1,4 +1,5 @@
 import QtQuick 2.4
+import SteamLibrarian 1.0
 
 SelectedAppPanelForm {
     signal moveClicked()
@@ -7,6 +8,20 @@ SelectedAppPanelForm {
         NumberAnimation {
             easing { type: Easing.InOutQuad }
         }
+    }
+
+    sizeLabel.text: {
+        var s = "";
+        if (app !== null)
+        {
+            s = UI.FormatByteAmount(app.sizeOnDisk, UI.roundUp);
+            var dlsize = app.downloadingSize;
+            if (dlsize > 0)
+            {
+                s = qsTr("%1 (+ about %2 downloading)").arg(s).arg(UI.FormatByteAmount(dlsize, UI.roundUp));
+            }
+        }
+        return s;
     }
 
     Component.onCompleted: {
