@@ -10,6 +10,16 @@ ComboBox {
 
     property var libsModel
 
+    function selectLibrary(lib)
+    {
+        libCombo.currentIndex = libsModelProxy.find(lib);
+    }
+
+    function selectedLib()
+    {
+        return libsModel.get(libsModelProxy.sourceIndex(libCombo.currentIndex));
+    }
+
     model: SortFilterProxyModel {
         id: libsModelProxy
         source: libsModel.count > 0 ? libsModel : null

@@ -2,6 +2,8 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>LibrariesCombo.qml</file>
+        <file>SelectedAppPanel.qml</file>
+        <file>SelectedAppPanelForm.ui.qml</file>
         <file>WorkPanelItem.qml</file>
         <file>js/RedBlackTree.js</file>
         <file>steps/StepPerformMove.qml</file>

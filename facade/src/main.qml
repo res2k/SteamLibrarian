@@ -179,10 +179,9 @@ ApplicationWindow {
                 libraries: Piping.libraries
             }
 
-            Item {
+            SelectedAppPanel {
                 id: selectedAppPanel
                 y: 419
-                height: grid.implicitHeight + grid.anchors.topMargin + grid.anchors.bottomMargin
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 anchors.right: parent.right
@@ -190,116 +189,18 @@ ApplicationWindow {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
 
-                Behavior on height {
-                    NumberAnimation {
-                        easing { type: Easing.InOutQuad }
-                    }
+                libsModel: libsModel
+
+                onMoveClicked: {
+                    stackView.push(workPanel);
+                    //workPanel.addStep(Qt.createComponent("steps/StepWait.qml"));
+                    var stepComp = Qt.createComponent("steps/StepWaitSteamStop.qml");
+                    workPanel.addStep(stepComp);
+                    var moveComp = Qt.createComponent("steps/StepPerformMove.qml");
+                    workPanel.addStep(moveComp,
+                                      {"app": selectedAppPanel.app,
+                                       "destinationLib": selectedLib()});
                 }
-
-                property var libsModel: appsListPage.libsModel
-                property var app: null
-                property int appLibIndex: -1
-                onAppChanged: {
-                    // Select app's current library in combo
-                    if (app != null)
-                    {
-                        libCombo.currentIndex = appLibIndex = libsModelProxy.find(app.library);
-                    }
-                }
-
-                SortFilterProxyModel {
-                    id: libsModelProxy
-                    source: libsModel.count > 0 ? libsModel : null
-
-                    sortOrder: Qt.AscendingOrder
-                    sortCaseSensitivity: Qt.CaseInsensitive
-                    sortRole: libsModel.count > 0 ? "name" : ""
-
-                    function find(obj) {
-                        return source != null ? proxyIndex(source.find(obj)) : -1;
-                    }
-                }
-
-                Rectangle {
-                    id: rectangle1
-                    color: palette.button
-                    border.width: 0
-                    anchors.fill: parent
-
-                    GridLayout {
-                        id: grid
-
-                        anchors.top: parent.top
-                        anchors.topMargin: 6
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 6
-                        anchors.right: parent.right
-                        anchors.rightMargin: 6
-                        anchors.left: parent.left
-                        anchors.leftMargin: 6
-                        columns: 3
-                        rows: 2
-
-                        Label {
-                            id: gameLabel
-                            Layout.columnSpan: 3
-                            Layout.fillWidth: true
-                            text: qsTr("Select a game.")
-                            elide: Text.ElideRight
-
-                            property real largeFontSize
-
-                            Component.onCompleted: {
-                                // Scale up font
-                                largeFontSize = this.font.pointSize * 1.25;
-                            }
-                        }
-
-                        Label {
-                            id: libLabel
-                            visible: false
-                            text: qsTr("Library:")
-                        }
-
-                        LibrariesCombo {
-                            id: libCombo
-                            visible: false
-                            Layout.fillWidth: true
-                            libsModel: libsModel
-                            textRole: "name"
-                        }
-
-                        Button {
-                            id: moveButton
-                            visible: false
-                            text: qsTr("&Move")
-                            enabled: libCombo.currentIndex != selectedAppPanel.appLibIndex
-
-                            onClicked: {
-                                stackView.push(workPanel);
-                                //workPanel.addStep(Qt.createComponent("steps/StepWait.qml"));
-                                var stepComp = Qt.createComponent("steps/StepWaitSteamStop.qml");
-                                workPanel.addStep(stepComp);
-                                var moveComp = Qt.createComponent("steps/StepPerformMove.qml");
-                                workPanel.addStep(moveComp,
-                                                  {"app": selectedAppPanel.app,
-                                                   "destinationLib": libsModel.get(libsModelProxy.sourceIndex(libCombo.currentIndex))});
-                            }
-                        }
-                    }
-
-                    states: [
-                        State {
-                            name: "GAME_SELECTED"
-                            when: selectedAppPanel.app != null
-                            PropertyChanges { target: gameLabel; text: selectedAppPanel.app.name; font.pointSize: gameLabel.largeFontSize }
-                            PropertyChanges { target: libLabel; visible: true }
-                            PropertyChanges { target: libCombo; visible: true }
-                            PropertyChanges { target: moveButton; visible: true }
-                        }
-                    ]
-                }
-
             }
         }
     }
