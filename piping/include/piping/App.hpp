@@ -64,6 +64,7 @@ namespace piping
     Q_PROPERTY(piping::Library* library READ library CONSTANT)
     Q_PROPERTY(QString name READ name NOTIFY dataChanged)
     Q_PROPERTY(quint64 sizeOnDisk READ sizeOnDisk NOTIFY dataChanged)
+    Q_PROPERTY(quint64 downloadingSize READ downloadingSize NOTIFY dataChanged)
   protected:
     /// Worker function to scan a download dir
     void ScanDownloadFiles(const QString& downloadingRoot, ACFData* acfData);
