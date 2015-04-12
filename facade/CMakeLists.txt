@@ -18,7 +18,6 @@ add_library(Facade
             include/facade/RegisterTypes.hpp
             include/facade/Start.hpp
             src/facade.qrc ${FACADE_QRC}
-            src/js/RedBlackTree.js
             src/main.qml
            )
 target_include_directories(Facade PUBLIC include)

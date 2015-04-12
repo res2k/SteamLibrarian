@@ -5,7 +5,6 @@
         <file>SelectedAppPanel.qml</file>
         <file>SelectedAppPanelForm.ui.qml</file>
         <file>WorkPanelItem.qml</file>
-        <file>js/RedBlackTree.js</file>
         <file>steps/StepPerformMove.qml</file>
         <file>steps/StepPerformUndo.qml</file>
         <file>steps/StepQueryUndo.qml</file>
