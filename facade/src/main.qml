@@ -37,7 +37,7 @@ Window {
                 anchors.top: parent.top
                 anchors.topMargin: 6
 
-                Button {
+                MenuPopupButton {
                     id: toolButton1
                     text: "Tools"
                     menu: Menu {
@@ -58,8 +58,6 @@ Window {
                             onTriggered: Qt.quit();
                         }
                     }
-
-                    // TODO: Appearance of a tool button
                 }
             }
 

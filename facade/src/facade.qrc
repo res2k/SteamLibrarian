@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>MenuPopupButton.qml</file>
         <file>LibrariesCombo.qml</file>
         <file>SelectedAppPanel.qml</file>
         <file>SelectedAppPanelForm.ui.qml</file>
