@@ -9,16 +9,13 @@ import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 import SteamLibrarian 1.0
 
-ApplicationWindow {
+Window {
     SystemPalette { id: palette; }
 
     id: applicationWindow1
     title: qsTr("Steam Librarian")
     width: 640
     height: 480
-    style: ApplicationWindowStyle {
-        background: Rectangle { color: palette.base }
-    }
     visible: true
 
     StackView {
