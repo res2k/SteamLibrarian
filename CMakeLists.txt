@@ -19,7 +19,7 @@ endif()
 add_subdirectory(facade)
 add_subdirectory(piping)
 
-add_executable(SteamLibrarian main.cpp)
+add_executable(SteamLibrarian main.cpp resources/SteamLibrarian.rc)
 target_link_libraries(SteamLibrarian
 	              Facade Piping
 		      Qt5::Qml Qt5::Widgets

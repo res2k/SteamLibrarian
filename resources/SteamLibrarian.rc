@@ -1,0 +1,2 @@
+// That stupid name is required so Qt picks it up as the standard application icon
+IDI_ICON1 ICON SteamLibrarian.ico
