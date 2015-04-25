@@ -25,6 +25,9 @@ import QtQuick.Controls.Styles 1.3
 import QtQuick.Controls.Private 1.0
 
 Button {
+    id: menuPopupButton
+    property font font
+
     // Tweak style to get appearance of a tool button
     style: ButtonStyle {
         background: Item {
@@ -56,6 +59,25 @@ Button {
                 anchors.verticalCenterOffset: 1
                 anchors.right: parent.right
                 anchors.rightMargin: padding.right
+            }
+        }
+
+        // Label copypasta to allow font customization
+        label: Item {
+            implicitWidth: row.implicitWidth
+            implicitHeight: row.implicitHeight
+            baselineOffset: row.y + text.y + text.baselineOffset
+            Row {
+                id: row
+                anchors.centerIn: parent
+                Text {
+                    id: text
+                    font: menuPopupButton.font
+                    renderType: Text.NativeRendering
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: StyleHelpers.stylizeMnemonics(control.text)
+                    color: SystemPaletteSingleton.buttonText(control.enabled)
+                }
             }
         }
     }
