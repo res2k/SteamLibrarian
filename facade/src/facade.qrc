@@ -20,10 +20,12 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>GamesTableView.qml</file>
         <file>MenuPopupButton.qml</file>
         <file>LibrariesCombo.qml</file>
         <file>SelectedAppPanel.qml</file>
         <file>SelectedAppPanelForm.ui.qml</file>
+        <file>WorkPanel.qml</file>
         <file>WorkPanelItem.qml</file>
         <file>steps/StepPerformMove.qml</file>
         <file>steps/StepPerformUndo.qml</file>
