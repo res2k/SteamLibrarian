@@ -38,6 +38,8 @@ Window {
     height: 480
     visible: true
 
+    FontLoader { id: uiFont; source: "data/SteamLibrarianUI.otf" }
+
     StackView {
         id: stackView
         anchors.fill: parent
@@ -49,8 +51,8 @@ Window {
 
             RowLayout {
                 id: rowLayout1
-                height: implicitHeight
-                anchors.right: parent.right
+                height: Math.max(implicitHeight, helpButton.implicitHeight)
+                anchors.right: helpButton.left
                 anchors.rightMargin: 6
                 anchors.left: parent.left
                 anchors.leftMargin: 6
@@ -58,7 +60,7 @@ Window {
                 anchors.topMargin: 6
 
                 MenuPopupButton {
-                    id: toolButton1
+                    id: toolsButton
                     text: "Tools"
                     menu: Menu {
                         title: qsTr("&Tools")
@@ -77,6 +79,24 @@ Window {
                             text: qsTr("E&xit")
                             onTriggered: Qt.quit();
                         }
+                    }
+                }
+            }
+
+            MenuPopupButton {
+                id: helpButton
+                text: "?"
+                font.family: uiFont.name
+                font.pointSize: 10
+
+                anchors.top: parent.top
+                anchors.topMargin: 6
+                anchors.right: parent.right
+                anchors.rightMargin: 6
+
+                menu: Menu {
+                    MenuItem {
+                        text: qsTr("&About")
                     }
                 }
             }
