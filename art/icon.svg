@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.91 r13725"
    sodipodi:docname="icon.svg"
-   inkscape:export-filename="D:\sources\SteamLibrarian\resources\icon32.png"
-   inkscape:export-xdpi="60"
-   inkscape:export-ydpi="60">
+   inkscape:export-filename="D:\sources\SteamLibrarian\resources\icon256.png"
+   inkscape:export-xdpi="480"
+   inkscape:export-ydpi="480">
   <defs
      id="defs4164">
     <inkscape:perspective
@@ -36,9 +36,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="15.585905"
-     inkscape:cy="24.443459"
+     inkscape:zoom="8"
+     inkscape:cx="-12.599693"
+     inkscape:cy="6.0650569"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -69,7 +69,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -87,7 +87,7 @@
        inkscape:connector-curvature="0"
        id="path4760"
        style="fill:#333333;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 5.0750578,1008.8827 29.1429422,2.9955 -9.4e-5,37.7224 -29.1428482,-2.9959 z"
+       d="m 5.0750578,1008.8385 29.1428482,2.9991 -9.4e-5,37.7633 -29.142849,-2.9992 z"
        sodipodi:nodetypes="ccccc" />
     <g
        id="g4831">
