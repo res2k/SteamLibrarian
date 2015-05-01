@@ -87,7 +87,7 @@ Window {
                 id: helpButton
                 text: "?"
                 font.family: uiFont.name
-                font.pointSize: 10
+                font.pointSize: 11
 
                 anchors.top: parent.top
                 anchors.topMargin: 6
@@ -97,6 +97,9 @@ Window {
                 menu: Menu {
                     MenuItem {
                         text: qsTr("&About")
+                        onTriggered: {
+                            stackView.push(aboutPanel);
+                        }
                     }
                 }
             }
@@ -151,6 +154,17 @@ Window {
         visible: false
         width: parent.width
         height: parent.height
+    }
 
+    AboutPanel {
+        id: aboutPanel
+        visible: false
+        width: parent.width
+        height: parent.height
+        uiFontFace: uiFont.name
+
+        onBackButtonClicked: {
+            stackView.pop();
+        }
     }
 }
