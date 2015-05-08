@@ -96,10 +96,13 @@ Window {
 
                 menu: Menu {
                     MenuItem {
+                        text: qsTr("&License")
+                        onTriggered: showAbout("license");
+                    }
+                    MenuSeparator {}
+                    MenuItem {
                         text: qsTr("&About")
-                        onTriggered: {
-                            stackView.push(aboutPanel);
-                        }
+                        onTriggered: showAbout("about");
                     }
                 }
             }
@@ -166,5 +169,10 @@ Window {
         onBackButtonClicked: {
             stackView.pop();
         }
+    }
+
+    function showAbout(tab) {
+        aboutPanel.showTab(tab);
+        stackView.push(aboutPanel);
     }
 }
