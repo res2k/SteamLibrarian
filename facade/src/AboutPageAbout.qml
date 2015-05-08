@@ -21,9 +21,12 @@
 import QtQuick 2.4
 
 AboutPageAboutForm {
+    signal linkActivated(string url)
+
     Component.onCompleted: {
         appNameLabel.font.pointSize *= 2;
         versionLabel.font.pointSize *= 1.25;
+        licenseLabel.onLinkActivated.connect(linkActivated);
     }
 }
 

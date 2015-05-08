@@ -25,6 +25,35 @@ AboutPanelForm {
 
     Component.onCompleted: {
         backButton.onClicked.connect(backButtonClicked);
+        aboutTab.onLoaded.connect(function() {
+            if (aboutTab.status === Loader.Ready)
+            {
+                aboutTab.item.onLinkActivated.connect(aboutLinkActivated);
+            }
+        });
+    }
+
+    function aboutLinkActivated(url) {
+        if (url.substr(0, 6) === "tab://")
+        {
+            showTab(url.substr(6));
+        }
+        else
+        {
+            Qt.openUrlExternally(url);
+        }
+    }
+
+    function showTab(tabId) {
+        for (var i = 0; i < tabView.count; i++)
+        {
+            if (tabView.getTab(i).tabId === tabId)
+            {
+                tabView.currentIndex = i;
+                return;
+            }
+        }
+        console.log("Couldn't find tab: " + tabId);
     }
 }
 

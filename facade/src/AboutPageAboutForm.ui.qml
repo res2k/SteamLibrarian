@@ -27,6 +27,7 @@ Item {
 
     property alias appNameLabel: appNameLabel
     property alias versionLabel: versionLabel
+    property alias licenseLabel: licenseLabel
 
     Image {
         id: logoImage
@@ -61,8 +62,8 @@ Item {
     }
 
     Label {
-        id: text1
-        text: qsTr("Licensed under the terms of the GNU General Public License version 3 (or later).")
+        id: licenseLabel
+        text: qsTr("Licensed under the terms of the <a href=\"tab://license\">GNU General Public License version 3</a> (or later).")
         anchors.right: parent.right
         anchors.rightMargin: 10
         wrapMode: Text.WordWrap

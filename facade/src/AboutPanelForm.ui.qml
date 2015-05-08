@@ -29,6 +29,8 @@ Item {
     height: 400
 
     property alias backButton: backButton
+    property alias tabView: tabView
+    property alias aboutTab: aboutTab
     property string uiFontFace
 
     Item {
@@ -91,6 +93,7 @@ Item {
 
     TabView
     {
+        id: tabView
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 6
         anchors.right: parent.right
@@ -103,14 +106,19 @@ Item {
         Tab
         {
             title: qsTr("About")
+            id: aboutTab
+            property string tabId: "about"
+
             AboutPageAbout {
-                id: aboutPage
             }
         }
 
         Tab
         {
             title: qsTr("License")
+            id: licenseTab
+            property string tabId: "license"
+
             AboutPageLicense {
             }
         }
