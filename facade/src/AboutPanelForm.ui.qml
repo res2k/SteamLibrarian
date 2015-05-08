@@ -28,8 +28,6 @@ Item {
     width: 600
     height: 400
 
-    property alias appNameLabel: appNameLabel
-    property alias versionLabel: versionLabel
     property alias backButton: backButton
     property string uiFontFace
 
@@ -91,56 +89,30 @@ Item {
 
     }
 
-    Item {
-        id: content
+    TabView
+    {
         anchors.bottom: parent.bottom
+        anchors.bottomMargin: 6
         anchors.right: parent.right
+        anchors.rightMargin: 6
         anchors.left: parent.left
-        anchors.leftMargin: 0
+        anchors.leftMargin: 6
         anchors.top: topBar.bottom
-        anchors.topMargin: 0
+        anchors.topMargin: 6
 
-        Image {
-            id: logoImage
-            width: 192
-            height: 192
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            fillMode: Image.Stretch
-            source: "data/icon.svg"
-            sourceSize.width: width
-            sourceSize.height: height
+        Tab
+        {
+            title: qsTr("About")
+            AboutPageAbout {
+                id: aboutPage
+            }
         }
 
-        Label {
-            id: appNameLabel
-            text: qsTr("SteamLibrarian")
-            anchors.top: logoImage.top
-            anchors.topMargin: 0
-            anchors.left: logoImage.right
-            anchors.leftMargin: 10
-        }
-
-        Label {
-            id: versionLabel
-            text: qsTr("Version 1.0")
-            anchors.left: appNameLabel.left
-            anchors.leftMargin: 0
-            anchors.top: appNameLabel.bottom
-            anchors.topMargin: 6
-        }
-
-        Label {
-            id: text1
-            text: qsTr("Licensed under the terms of the GNU General Public License version 3 (or later).")
-            anchors.right: parent.right
-            anchors.rightMargin: 10
-            wrapMode: Text.WordWrap
-            anchors.top: versionLabel.bottom
-            anchors.topMargin: 10
-            anchors.left: versionLabel.left
+        Tab
+        {
+            title: qsTr("License")
+            AboutPageLicense {
+            }
         }
     }
 }

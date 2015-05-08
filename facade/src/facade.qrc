@@ -20,6 +20,10 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>AboutPageAbout.qml</file>
+        <file>AboutPageAboutForm.ui.qml</file>
+        <file>AboutPageLicense.qml</file>
+        <file>AboutPageLicenseForm.ui.qml</file>
         <file>AboutPanel.qml</file>
         <file>AboutPanelForm.ui.qml</file>
         <file>GamesTableView.qml</file>
@@ -30,6 +34,7 @@
         <file>WorkPanel.qml</file>
         <file>WorkPanelItem.qml</file>
         <file alias="data/icon.svg">../../art/icon.svg</file>
+        <file>data/GPLv3.html</file>
         <file>data/SteamLibrarianUI.otf</file>
         <file>steps/StepPerformMove.qml</file>
         <file>steps/StepPerformUndo.qml</file>

@@ -20,11 +20,10 @@
 
 import QtQuick 2.4
 
-AboutPanelForm {
-    signal backButtonClicked()
-
+AboutPageAboutForm {
     Component.onCompleted: {
-        backButton.onClicked.connect(backButtonClicked);
+        appNameLabel.font.pointSize *= 2;
+        versionLabel.font.pointSize *= 1.25;
     }
 }
 

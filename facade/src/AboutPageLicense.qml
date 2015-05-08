@@ -20,11 +20,19 @@
 
 import QtQuick 2.4
 
-AboutPanelForm {
-    signal backButtonClicked()
-
+AboutPageLicenseForm {
     Component.onCompleted: {
-        backButton.onClicked.connect(backButtonClicked);
+        licenseTextArea.linkActivated.connect(Qt.openUrlExternally);
+
+        var xhr = new XMLHttpRequest;
+        xhr.open("GET", "data/GPLv3.html");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE)
+            {
+                licenseTextArea.text = xhr.responseText;
+            }
+        }
+        xhr.send();
     }
 }
 

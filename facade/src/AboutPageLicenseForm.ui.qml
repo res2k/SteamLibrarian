@@ -19,12 +19,24 @@
 */
 
 import QtQuick 2.4
+import QtQuick.Controls 1.2
 
-AboutPanelForm {
-    signal backButtonClicked()
+Item {
+    width: 600
+    height: 400
 
-    Component.onCompleted: {
-        backButton.onClicked.connect(backButtonClicked);
+    property alias licenseTextArea: licenseTextArea
+
+    TextArea {
+        id: licenseTextArea
+        anchors.fill: parent
+        anchors.leftMargin: 6
+        anchors.rightMargin: 6
+        anchors.topMargin: 6
+        anchors.bottomMargin: 6
+        readOnly: true
+        textFormat: TextEdit.RichText
     }
+
 }
 
