@@ -19,6 +19,7 @@
 */
 
 import QtQuick 2.4
+import SteamLibrarian 1.0
 
 AboutPageAboutForm {
     signal linkActivated(string url)
@@ -26,6 +27,7 @@ AboutPageAboutForm {
     Component.onCompleted: {
         appNameLabel.font.pointSize *= 2;
         versionLabel.font.pointSize *= 1.25;
+        versionLabel.text = versionLabel.text.arg(Piping.version.number);
         licenseLabel.onLinkActivated.connect(linkActivated);
     }
 }

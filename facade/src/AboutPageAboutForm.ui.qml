@@ -54,7 +54,7 @@ Item {
 
     Label {
         id: versionLabel
-        text: qsTr("Version 1.0")
+        text: qsTr("Version %1")
         anchors.left: appNameLabel.left
         anchors.leftMargin: 0
         anchors.top: appNameLabel.bottom
