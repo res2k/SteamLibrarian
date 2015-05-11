@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 PROJECT(SteamLibrarian)
 
+include(build/version.cmake)
+# Create a header with the version definitions
+FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/version)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version/version.h)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/version)
+
 find_package(Qt5 REQUIRED COMPONENTS Concurrent Qml Quick Widgets WinExtras)
 set(CMAKE_AUTOMOC ON)
 set_property(DIRECTORY PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:QT_QML_DEBUG>)
