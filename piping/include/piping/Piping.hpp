@@ -42,6 +42,8 @@ namespace piping
     bool m_steamRunning;
     /// Libraries container
     Libraries* m_libraries;
+    /// Version info
+    QObject* m_version;
 
     class RunningStateDetector;
     /// Helper to detect the Steam running state
@@ -96,6 +98,10 @@ namespace piping
 
     Q_PROPERTY(piping::Libraries* libraries READ libraries CONSTANT)
     /** @} */
+
+    /// Get object providing version info
+    QObject* version() const;
+    Q_PROPERTY(QObject* version READ version CONSTANT);
   private:
     /// Fetch Steam install path
     void FetchInstallPath();

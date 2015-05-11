@@ -32,10 +32,12 @@
 #include <Windows.h>
 
 #include "RunningStateDetector.hpp"
+#include "Version.hpp"
 
 namespace piping
 {
-  Piping::Piping(QObject* parent) : QObject(parent), m_steamRunning(false), m_runningStateDetector(nullptr)
+  Piping::Piping(QObject* parent) : QObject(parent), m_steamRunning(false), m_runningStateDetector(nullptr),
+    m_version(new Version(this))
   {
     FetchInstallPath();
     if (!m_steamInstallPath.isEmpty())
@@ -75,6 +77,11 @@ namespace piping
   Libraries* Piping::libraries() const
   {
     return m_libraries;
+  }
+
+  QObject* Piping::version() const
+  {
+    return m_version;
   }
 
   namespace

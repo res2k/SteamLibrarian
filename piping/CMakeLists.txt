@@ -13,6 +13,8 @@ add_library(Piping
             src/RunningStateDetector.hpp
             src/vdf.cpp
             src/vdf.hpp
+            src/Version.cpp
+            src/Version.hpp
             include/piping/App.hpp
             include/piping/AppMover.hpp
             include/piping/Libraries.hpp
