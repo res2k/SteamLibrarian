@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.9</ProductVersion>
+    <ProjectGuid>35826bc7-7dbc-4cfb-ac22-8c18140589f9</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>SteamLibrarian-$(StmLbnVersion)</OutputName>
+    <OutputType>Package</OutputType>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <IncludeSearchPaths>$(ProjectDir)\</IncludeSearchPaths>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug;Version=$(StmLbnVersion);BuildRoot=$(SolutionDir)..\;CMakeConfig=$(CMakeConfig);DependencySources=$(SolutionDir)deps-$(CMakeConfig);SourceRoot=$(ProjectDir)..\</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Version=$(StmLbnVersion);BuildRoot=$(SolutionDir)..\;CMakeConfig=$(CMakeConfig);DependencySources=$(SolutionDir)deps-$(CMakeConfig);SourceRoot=$(ProjectDir)..\</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="MsiPackage.wxs" />
+    <Compile Include="$(IntermediateOutputPath)Deps.wxs" />
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" />
+  <!--
+	To modify your build process, add your task inside one of the targets below and uncomment it.
+	Other similar extension points exist, see Wix.targets.
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+ <Target Name="BeforeBuild">
+    <HeatDirectory
+		ToolPath="$(WixToolPath)"
+		AutogenerateGuids="true"
+		OutputFile="$(IntermediateOutputPath)Deps.wxs"
+		SuppressUniqueIds="false"
+		Transforms="%(HarvestDirectory.Transforms)"
+		Directory="$(SolutionDir)deps-$(CMakeConfig)"
+		ComponentGroupName="C_DependencyLibs"
+		DirectoryRefId="INSTALLFOLDER"
+		KeepEmptyDirectories="false"
+		PreprocessorVariable="var.DependencySources"
+		SuppressRootDirectory="true">
+    </HeatDirectory>
+  </Target>
+</Project>

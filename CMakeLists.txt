@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 PROJECT(SteamLibrarian)
 
 include(build/version.cmake)
@@ -53,3 +53,5 @@ install(FILES plugin/qmldir
         COMPONENT plugin)
 install(CODE "execute_process(COMMAND \"${_qt5Core_install_prefix}/bin/qmlplugindump.exe\" SteamLibrarian 1.0 \"${CMAKE_BINARY_DIR}/qml\" OUTPUT_FILE \"${CMAKE_BINARY_DIR}/qml/SteamLibrarian/plugins.qmltypes\")"
         COMPONENT plugin)
+
+add_subdirectory(installer)

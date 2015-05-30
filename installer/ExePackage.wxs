@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+  <?include definitions.wxi ?>
+  <Bundle Name="SteamLibrarian" Version="$(var.Version)" Manufacturer="$(var.Manufacturer)" UpgradeCode="29dcde4e-d00d-4605-b5f2-f15d61d0a909"
+          IconSourceFile="$(var.SourceRoot)resources\SteamLibrarian.ico">
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLargeLicense">
+      <bal:WixStandardBootstrapperApplication LogoFile="$(var.SourceRoot)resources\icon64.png" 
+                                              LicenseFile="$(var.SourceRoot)installer\gpl-3.0.rtf"
+                                              ShowVersion="yes" />
+    </BootstrapperApplicationRef>
+
+    <Variable Name="InstallFolder" Type="string" Value="[ProgramFilesFolder]SteamLibrarian"/>
+
+		<Chain>
+      <MsiPackage SourceFile="bin\$(var.Config)\SteamLibrarian-$(var.Version).msi">
+        <MsiProperty Name="INSTALLLOCATION" Value="[InstallFolder]" />
+      </MsiPackage>
+		</Chain>
+	</Bundle>
+</Wix>

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "MsiPackage", "@CMAKE_CURRENT_SOURCE_DIR@\MsiPackage.wixproj", "{35826BC7-7DBC-4CFB-AC22-8C18140589F9}"
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "ExePackage", "@CMAKE_CURRENT_SOURCE_DIR@\ExePackage.wixproj", "{29DCDE4E-D00D-4605-B5F2-F15D61D0A909}"
+	ProjectSection(ProjectDependencies) = postProject
+		{35826BC7-7DBC-4CFB-AC22-8C18140589F9} = {35826BC7-7DBC-4CFB-AC22-8C18140589F9}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35826BC7-7DBC-4CFB-AC22-8C18140589F9}.Debug|x86.ActiveCfg = Debug|x86
+		{35826BC7-7DBC-4CFB-AC22-8C18140589F9}.Debug|x86.Build.0 = Debug|x86
+		{35826BC7-7DBC-4CFB-AC22-8C18140589F9}.Release|x86.ActiveCfg = Release|x86
+		{35826BC7-7DBC-4CFB-AC22-8C18140589F9}.Release|x86.Build.0 = Release|x86
+		{29DCDE4E-D00D-4605-B5F2-F15D61D0A909}.Debug|x86.ActiveCfg = Debug|x86
+		{29DCDE4E-D00D-4605-B5F2-F15D61D0A909}.Debug|x86.Build.0 = Debug|x86
+		{29DCDE4E-D00D-4605-B5F2-F15D61D0A909}.Release|x86.ActiveCfg = Release|x86
+		{29DCDE4E-D00D-4605-B5F2-F15D61D0A909}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

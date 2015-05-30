@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include definitions.wxi ?>
+	<Product Id="*" Name="SteamLibrarian" Language="1033" Version="$(var.Version)" Manufacturer="$(var.Manufacturer)" UpgradeCode="d9135ebf-68b9-4088-bd62-acfa9c9b0d1d">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+		<Feature Id="ProductFeature" Title="SteamLibrarian" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="C_DependencyLibs" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="SteamLibrarian" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<Component>
+        <File Name="SteamLibrarian.exe" Source="$(var.BuildRoot)$(var.CMakeConfig)\SteamLibrarian.exe" />
+			</Component>
+      <Component>
+        <File Name="qt.conf" Source="$(var.SourceRoot)installer\qt.conf" />
+      </Component>
+    </ComponentGroup>
+	</Fragment>
+</Wix>
