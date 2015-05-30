@@ -29,6 +29,7 @@ AboutPageAboutForm {
         versionLabel.font.pointSize *= 1.25;
         versionLabel.text = versionLabel.text.arg(Piping.version.number);
         licenseLabel.onLinkActivated.connect(linkActivated);
+        linksLabel.onLinkActivated.connect(linkActivated);
     }
 }
 

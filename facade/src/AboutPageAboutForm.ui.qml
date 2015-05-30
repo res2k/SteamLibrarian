@@ -28,6 +28,7 @@ Item {
     property alias appNameLabel: appNameLabel
     property alias versionLabel: versionLabel
     property alias licenseLabel: licenseLabel
+    property alias linksLabel: linksLabel
 
     Image {
         id: logoImage
@@ -70,6 +71,17 @@ Item {
         anchors.top: versionLabel.bottom
         anchors.topMargin: 10
         anchors.left: versionLabel.left
+    }
+
+    Label {
+        id: linksLabel
+        text: qsTr("<a href=\"https://github.com/res2k/SteamLibrarian/releases\">Browse latest releases</a><br><a href=\"https://github.com/res2k/SteamLibrarian/issues\">Report issues</a><br><a href=\"http://res2k.github.io/SteamLibrarian/\">View project page</a>")
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        wrapMode: Text.WordWrap
+        anchors.top: licenseLabel.bottom
+        anchors.topMargin: 10
+        anchors.left: licenseLabel.left
     }
 }
 
