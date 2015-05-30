@@ -85,7 +85,7 @@ Window {
                 id: helpButton
                 text: "?"
                 font.family: uiFont.name
-                font.pointSize: 11
+                font.pointSize: 12
 
                 anchors.top: parent.top
                 anchors.topMargin: 6
