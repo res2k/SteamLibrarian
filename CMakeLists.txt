@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 PROJECT(SteamLibrarian)
 
+# Make sure version info is regenerated if the repo changes
+set_directory_properties(PROPERTIES CMAKE_CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/.git")
+
 include(build/version.cmake)
 # Create a header with the version definitions
 FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/version)
