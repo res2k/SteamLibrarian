@@ -45,8 +45,11 @@ target_link_libraries(QmlSteamLibrarian
 install(TARGETS QmlSteamLibrarian
         RUNTIME
         DESTINATION ${CMAKE_BINARY_DIR}/qml/SteamLibrarian
-        CONFIGURATIONS Release RelWithDebInfo)
+        CONFIGURATIONS Release RelWithDebInfo
+        COMPONENT plugin)
 install(FILES plugin/qmldir
         DESTINATION ${CMAKE_BINARY_DIR}/qml/SteamLibrarian
-        CONFIGURATIONS Release RelWithDebInfo)
-install(CODE "execute_process(COMMAND \"${_qt5Core_install_prefix}/bin/qmlplugindump.exe\" SteamLibrarian 1.0 \"${CMAKE_BINARY_DIR}/qml\" OUTPUT_FILE \"${CMAKE_BINARY_DIR}/qml/SteamLibrarian/plugins.qmltypes\")")
+        CONFIGURATIONS Release RelWithDebInfo
+        COMPONENT plugin)
+install(CODE "execute_process(COMMAND \"${_qt5Core_install_prefix}/bin/qmlplugindump.exe\" SteamLibrarian 1.0 \"${CMAKE_BINARY_DIR}/qml\" OUTPUT_FILE \"${CMAKE_BINARY_DIR}/qml/SteamLibrarian/plugins.qmltypes\")"
+        COMPONENT plugin)
