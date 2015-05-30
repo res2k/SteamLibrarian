@@ -18,13 +18,27 @@
 			<Directory Id="ProgramFilesFolder">
 				<Directory Id="INSTALLFOLDER" Name="SteamLibrarian" />
 			</Directory>
-		</Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="SteamLibrarian"/>
+      </Directory>
+    </Directory>
 	</Fragment>
 
 	<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
 			<Component>
-        <File Name="SteamLibrarian.exe" Source="$(var.BuildRoot)$(var.CMakeConfig)\SteamLibrarian.exe" />
+        <File Name="SteamLibrarian.exe" Source="$(var.BuildRoot)$(var.CMakeConfig)\SteamLibrarian.exe" KeyPath="yes">
+          <Shortcut Id="ApplicationStartMenuShortcut"
+                    Directory="ApplicationProgramsFolder"
+                    Name="SteamLibrarian"
+                    Description="A tool to move applications between Steam libraries."
+                    WorkingDirectory="INSTALLFOLDER"
+                    Advertise="yes"
+                    Icon="SteamLibrarian.exe">
+            <Icon Id="SteamLibrarian.exe" SourceFile="$(var.SourceRoot)resources\SteamLibrarian.ico" />
+          </Shortcut>
+        </File>
+        <RemoveFolder Id="ApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall"/>
 			</Component>
       <Component>
         <File Name="qt.conf" Source="$(var.SourceRoot)installer\qt.conf" />
