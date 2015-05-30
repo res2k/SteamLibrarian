@@ -10,17 +10,17 @@
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
-    <IncludeSearchPaths>$(ProjectDir)\</IncludeSearchPaths>
+    <IncludeSearchPaths>$(SolutionDir)\</IncludeSearchPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug;Version=$(StmLbnVersion);BuildRoot=$(SolutionDir)..\;CMakeConfig=$(CMakeConfig);DependencySources=$(SolutionDir)deps-$(CMakeConfig);SourceRoot=$(ProjectDir)..\</DefineConstants>
+    <DefineConstants>Debug;BuildRoot=$(SolutionDir)..\;CMakeConfig=$(CMakeConfig);DependencySources=$(SolutionDir)deps-$(CMakeConfig);SourceRoot=$(ProjectDir)..\</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>$(SolutionDir)obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Version=$(StmLbnVersion);BuildRoot=$(SolutionDir)..\;CMakeConfig=$(CMakeConfig);DependencySources=$(SolutionDir)deps-$(CMakeConfig);SourceRoot=$(ProjectDir)..\</DefineConstants>
+    <DefineConstants>BuildRoot=$(SolutionDir)..\;CMakeConfig=$(CMakeConfig);DependencySources=$(SolutionDir)deps-$(CMakeConfig);SourceRoot=$(ProjectDir)..\</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="MsiPackage.wxs" />

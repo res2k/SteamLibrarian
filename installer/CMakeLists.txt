@@ -1,4 +1,5 @@
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/installer.sln.in" "${CMAKE_CURRENT_BINARY_DIR}/installer.sln")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/definitions.wxi.in" "${CMAKE_CURRENT_BINARY_DIR}/definitions.wxi")
 
 SET(INSTALLER_OUTPUT "SteamLibrarian.exe")
 ADD_CUSTOM_COMMAND(OUTPUT ${INSTALLER_OUTPUT}
@@ -8,7 +9,7 @@ ADD_CUSTOM_COMMAND(OUTPUT ${INSTALLER_OUTPUT}
                    COMMENT "Building installer package")
 ADD_CUSTOM_TARGET(BUILD_INSTALLER ALL
                   SOURCES ${INSTALLER_OUTPUT}
-                          definitions.wxi
+                          definitions.wxi.in
                           MsiPackage.wxs 
                           ExePackage.wxs
                           collect_libs.cmake)

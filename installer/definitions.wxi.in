@@ -1,3 +1,4 @@
 <Include>
 <?define Manufacturer = "Frank Richter" ?>
+<?define Version = "@STMLBN_VERSION_FULL@" ?>
 </Include>
