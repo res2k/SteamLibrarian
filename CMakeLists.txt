@@ -28,8 +28,11 @@ add_subdirectory(piping)
 add_executable(SteamLibrarian main.cpp resources/SteamLibrarian.rc)
 target_link_libraries(SteamLibrarian
 	              Facade Piping
-		      Qt5::Qml Qt5::Widgets
+		      Qt5::Qml Qt5::Widgets Qt5::WinMain
                       uxtheme.lib)
+SET_TARGET_PROPERTIES(SteamLibrarian PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:WINDOWS"
+                                                LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS"
+                                                LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
 
 add_library(QmlSteamLibrarian SHARED
             plugin/SteamLibrarian.hpp
