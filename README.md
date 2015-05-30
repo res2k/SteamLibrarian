@@ -17,7 +17,7 @@ move games around as you play new games, put old ones aside or change your favor
 
 Requirements
 ------------
-* OS: Windows Vista and newer (testes on Windows 7 and 8.1)
+* OS: Windows Vista and newer (tested on Windows 7 and 8.1)
 * Doesn't make much sense without Steam
 
 Building from source
