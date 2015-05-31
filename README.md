@@ -23,7 +23,7 @@ Requirements
 Building from source
 --------------------
 * Developed with Visual Studio 2013
-* Dependencies: Qt, Boost 1.57
+* Dependencies: Qt 5.4, Boost 1.57
 * Requires CMake, WiX Toolset for building
 
 Contact
