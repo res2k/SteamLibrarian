@@ -26,6 +26,9 @@
     <Compile Include="MsiPackage.wxs" />
     <Compile Include="$(IntermediateOutputPath)Deps.wxs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(SolutionDir)definitions.wxi" />
+  </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
