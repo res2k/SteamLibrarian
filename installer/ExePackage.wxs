@@ -14,7 +14,7 @@
 
 		<Chain>
       <MsiPackage SourceFile="bin\$(var.Config)\SteamLibrarian-$(var.Version).msi">
-        <MsiProperty Name="INSTALLLOCATION" Value="[InstallFolder]" />
+        <MsiProperty Name="INSTALLFOLDER" Value="[InstallFolder]" />
       </MsiPackage>
 		</Chain>
 	</Bundle>
