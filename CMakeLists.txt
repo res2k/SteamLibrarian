@@ -36,6 +36,9 @@ target_link_libraries(SteamLibrarian
 SET_TARGET_PROPERTIES(SteamLibrarian PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:WINDOWS"
                                                 LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS"
                                                 LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
+ADD_CUSTOM_COMMAND(TARGET SteamLibrarian
+                   POST_BUILD
+                   COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/codesign.cmd" "$<TARGET_FILE:SteamLibrarian>")
 
 add_library(QmlSteamLibrarian SHARED
             plugin/SteamLibrarian.hpp

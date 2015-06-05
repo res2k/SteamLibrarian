@@ -1,0 +1,5 @@
+@echo off
+:: Wrapper script around signtool
+:: Adjust so it contains a signtool invocation suitable for you local setup, 
+:: save as codesign.cmd
+signtool sign /f PATH-TO-PFX /p CERTIFICATE-PASSWORD /t http://time.certum.pl/ "%1"

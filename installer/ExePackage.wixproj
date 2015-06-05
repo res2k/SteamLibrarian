@@ -11,6 +11,7 @@
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <IncludeSearchPaths>$(SolutionDir)\</IncludeSearchPaths>
+    <SignOutput>true</SignOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
@@ -45,4 +46,10 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+ <Target Name="SignBundleEngine">
+   <Exec Command="&quot;$(ProjectDir)..\codesign.cmd&quot; &quot;%(SignBundleEngine.FullPath)&quot;" />
+ </Target>
+ <Target Name="SignBundle">
+   <Exec Command="&quot;$(ProjectDir)..\codesign.cmd&quot; &quot;%(SignBundle.FullPath)&quot;" />
+ </Target>
 </Project>

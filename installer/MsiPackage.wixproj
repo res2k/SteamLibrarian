@@ -11,6 +11,7 @@
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <IncludeSearchPaths>$(SolutionDir)\</IncludeSearchPaths>
+    <SignOutput>true</SignOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>$(SolutionDir)bin\$(Configuration)\</OutputPath>
@@ -52,5 +53,11 @@
 		PreprocessorVariable="var.DependencySources"
 		SuppressRootDirectory="true">
     </HeatDirectory>
-  </Target>
+ </Target>
+ <Target Name="SignCabs">
+   <Exec Command="&quot;$(ProjectDir)..\codesign.cmd&quot; &quot;%(SignCabs.FullPath)&quot;" />
+ </Target>
+ <Target Name="SignMsi">
+   <Exec Command="&quot;$(ProjectDir)..\codesign.cmd&quot; &quot;%(SignMsi.FullPath)&quot;" />
+ </Target>
 </Project>
